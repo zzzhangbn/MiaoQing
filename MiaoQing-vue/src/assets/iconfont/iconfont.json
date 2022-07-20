@@ -1,0 +1,16 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "22851221",
+      "name": "面性通知消息铃铛",
+      "font_class": "mianxingtongzhi",
+      "unicode": "e6af",
+      "unicode_decimal": 59055
+    }
+  ]
+}

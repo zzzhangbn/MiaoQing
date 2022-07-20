@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ricemonitoring.mapper.ConditionsAnalysisMapper">
+
+    <!--    #############################一季稻开始############################-->
+<!--    通过表名查询其id-->
+    <select id="getIdByTableName" parameterType="String" resultType="String">
+        select second_name_id from table_second_name where second_name = #{tableName} limit 1
+    </select>
+
+<!--    查出所有在用的一级表格-->
+    <select id="getFileds" resultType="conditions_analysis" parameterType="String">
+        select * from conditions_analysis where second_name = #{tableId}
+    </select>
+    <!--通过表的id以及字段名查出字段在数据库的字段名-->
+    <select id="getDataFileds" resultType="String">
+        select column_id  from table_header where second_name=#{tableId} and column_name = #{dataColumn} limit 1
+    </select>
+    <!--通过表名字段id以及城市名查出数据记录-->
+    <select id="getData" resultType="String">
+        select ${field}  from ${tableId} where field_1 = #{city} limit 1
+    </select>
+    <!-- 通过表id和字段名称查出字段的id   -->
+    <select id="getField" parameterType="String" resultType="String">
+        select column_code from conditions_analysis where second_name = #{tableId} and column_name = #{fieldName}
+    </select>
+
+    <select id="crop_01_01_table_01_02Analysis_1" parameterType="String" resultType="crop_01_01_table_01_02">
+        select pin_zhong_name,SUM(area_data) as area_data,county_area
+        from crop_01_01_table_01_02 where in_use = '3' and modification_time like '%${year}%'
+        <if test="area!=null and area!=''">
+            and county = #{area}
+        </if>
+        group by pin_zhong_name
+    </select>
+
+<!--    获取1-2表中的总面积-->
+    <select id="getTotalArea_2_1" parameterType="String" resultType="crop_01_01_table_01_02">
+        SELECT DISTINCT(county),county_area FROM crop_01_01_table_01_02 where in_use = '3' and modification_time like '%${year}%'
+    </select>
+    <!--   通过水稻品种查出该品种的数据-->
+    <select id="crop_01_01_table_01_02Analysis_2" resultType="crop_01_01_table_01_02" parameterType="String">
+        select field_1,${dataField} from crop_01_01_table_01_02 where ${nameField} = #{variety} and in_use = '3' and modification_time like '%2021%'
+    </select>
+    <!--    通过县市查出表3-2中的数据-->
+    <select id="crop_01_01_table_03_02Analysis_1" parameterType="String" resultType="crop_01_01_table_03_02">
+        select id,field_1,field_2,field_3,
+        <foreach collection="sqlFields" separator="," item="item">
+            ${item}
+        </foreach>
+        from crop_01_01_table_03_02 where in_use = '3' and modification_time like '%${year}%'
+        <if test="area!=null and area!=''">
+            and field_1 = #{area}
+        </if>
+        <if test="areaCate!=null and areaCate!=''">
+            and field_2 = #{areaCate}
+        </if>
+    </select>
+
+    <!--根据地区类型查crop_01_01_table_04_01中的数据信息-->
+    <select id="crop_01_01_table_04_01Analysis_1" parameterType="String" resultType="crop_01_01_table_04_01">
+        select id,field_1,field_2,
+                <foreach collection="sqlFields" item="item" separator=",">
+                    ${item}
+                </foreach>
+        from crop_01_01_table_04_01 where  in_use = '3' and modification_time like '%${year}%'
+        <if test="areaCate!=null and areaCate!=''">
+            and field_3 = #{areaCate}
+        </if>
+        <if test="riceCate!=''">
+            and field_4 like '%${riceCate}%'
+        </if>
+        <if test="cultivationMethod!=''">
+            and field_7 like '%${cultivationMethod}%'
+        </if>
+    </select>
+
+    <select id="crop_01_01_table_04_01Analysis_2" parameterType="String" resultType="crop_01_01_table_04_01">
+        select id,field_1,field_2,
+        <foreach collection="sqlFields" item="item" separator=",">
+            ${item}
+        </foreach>
+        from crop_01_01_table_04_01 where  in_use = '3' and modification_time like '%${year}%'
+        <if test="area!=null and area!=''">
+            and field_1 = #{area}
+        </if>
+    </select>
+
+    <!-- 表4-3 20xx年度水稻监测点茎蘖数叶面积构成表
+    crop_01_01_table_04_03Analysis_1：通过地区类型求得平均值
+    crop_01_01_table_04_03Analysis_2：不同地区类型下的分葉数-->
+    <select id="crop_01_01_table_04_03Analysis_1"  resultType="crop_01_01_table_04_03">
+        select id,field_1,field_2,
+               <foreach collection="sqlFields" separator="," item="item">
+                   ${item}
+               </foreach>
+        from crop_01_01_table_04_03 where  in_use = '3' and modification_time like '%${year}%'
+        <if test="areaCate!=null and areaCate!=''">
+            and field_3 = #{areaCate}
+        </if>
+        <if test="strainCategory!=''">
+            and field_5 like '%${strainCategory}%'
+        </if>
+        <if test="cultivationMethod!=''">
+            and field_7 like '%${cultivationMethod}%'
+        </if>
+    </select>
+
+    <select id="crop_01_01_table_04_03Analysis_2" parameterType="String" resultType="crop_01_01_table_04_03">
+        select avg(field_10_6) as field_10_6,avg(field_10_7) as field_10_7,avg(field_10_8) as field_10_8
+        from crop_01_01_table_04_03 where field_3 = #{areaCate} and in_use = '3' and modification_time like '%2021%'
+    </select>
+
+<!--
+    /*
+    表7-1：年度监测县(市、区)水稻单季稻苗情监测预测产表
+    crop_01_01_table_07_01Analysis_1：柱状图展示某一地区类型下的面积、亩有效穗(万)、穗总粒数(个)、结实率(％)、千粒重(g)、理论产量(kg/亩)
+    crop_01_01_table_04_03Analysis_2：不同地区类型下的分葉数
+     */
+-->
+    <select id="crop_01_01_table_07_01Analysis_1" resultType="crop_01_01_table_07_01">
+        select id, avg(field_4_6) as field_4_6,avg(field_5_6) as field_5_6,avg(field_6_6) as field_6_6
+               ,avg(field_7_6) as field_7_6,avg(field_8_6) as field_8_6,avg(field_9_6) as field_9_6,
+               modification_time
+        from crop_01_01_table_07_01 where field_2 =#{cate} and modification_time like '%${year}%' and in_use = '3'
+    </select>
+
+<!--
+    表7-2：年度监测县(市、区)水稻单季稻收获进度调查
+    crop_01_01_table_07_02Analysis_1：柱状图展示某一地区类型下的面积、亩有效穗(万)、穗总粒数(个)、结实率(％)、千粒重(g)、理论产量(kg/亩)
+-->
+    <select id="crop_01_01_table_07_02Analysis_1" resultType="crop_01_01_table_07_02">
+        select avg(field_3) as field_3,
+               <foreach collection="sqlFields" item="item" separator=",">
+                   ${item}
+               </foreach>
+        from crop_01_01_table_07_02 where field_2 =#{cate} and modification_time like '%${year}%' and in_use = '3'
+    </select>
+
+<!--
+    表7-3：年度监测县(市、区)水稻单季稻测产表
+    crop_01_01_table_07_03Analysis_1：柱状图显示不同栽种方式下的三个地区类型的理论产量
+ -->
+    <select id="crop_01_01_table_07_03Analysis_1" resultType="crop_01_01_table_07_03">
+        select avg(field_3_6) as field_3_6,avg(field_4_6) as field_4_6,avg(field_5_6) as field_5_6,
+               avg(field_6_6) as field_6_6,avg(field_7_6) as field_7_6,avg(field_8_6) as field_8_6,
+               avg(field_9_6) as field_9_6,modification_time
+               from crop_01_01_table_07_03 where field_2 =#{cate} and modification_time like '%${year}%' and in_use = '3'
+    </select>
+    <!--
+    /*
+    表10-1：年度监测县(市、区)水稻单季稻测产表
+    getMonitoringCode:通过县查出所有的监测点代码
+     */-->
+    <select id="crop_01_01_table_10_01Analysis_1" parameterType="String" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where field_2 = #{monitoring_code} and modification_time like '%${year}%' and in_use = '3' limit 1
+    </select>
+    <select id="getMonitoringCode" parameterType="String" resultType="String">
+        select field_1 from crop_01_01_table_02_02 where field_2_2 = #{area} and in_use = '3' and modification_time like '%${year}%'
+    </select>
+
+    <select id="crop_01_01_table_10_01Analysis_2" resultType="crop_01_01_table_10_01">
+        select field_3,
+               <foreach collection="sqlFields" separator="," item="item">
+                   ${item}
+               </foreach>
+                from crop_01_01_table_10_01 where  in_use = '3' and modification_time like '%${year}%'
+                <if test="areaCate!=null and areaCate!=''">
+                    and field_3 = #{areaCate}
+                </if>
+    </select>
+
+    <!--    #############################一季稻结束############################-->
+    <!--    #############################二季稻开始############################-->
+
+    <select id="crop_01_02_table_01_02Analysis_1" parameterType="String" resultType="crop_01_01_table_01_02">
+        select pin_zhong_name,SUM(area_data) as area_data,county_area
+        from crop_01_02_table_01_02 where in_use = '3' and modification_time like '%${year}%'
+        <if test="area!=null and area!=''">
+            and county = #{area}
+        </if>
+        group by pin_zhong_name
+    </select>
+
+    <select id="crop_01_02_table_03_06Analysis_1" parameterType="String" resultType="crop_01_02_table_03_04">
+        select
+        <foreach collection="sqlFields" separator="," item="item">
+            ${item}
+        </foreach>
+        from crop_01_02_table_03_06 where in_use = '3' and modification_time like '%${year}%'
+        <if test="areaCate!=null and areaCate!=''">
+            and field_2 = #{areaCate}
+        </if>
+        <if test="area!=''">
+            and field_1 like '%${area}%'
+        </if>
+    </select>
+
+    <select id="crop_01_02_table_04_01Analysis_1" parameterType="String" resultType="crop_01_02_table_04_01">
+        select
+        <foreach collection="sqlFields" item="item" separator=",">
+            ${item}
+        </foreach>
+        from crop_01_02_table_04_01 where in_use = '3' and modification_time like '%${year}%'
+        <if test="areaCate!=null and areaCate!=''">
+            and field_3 = #{areaCate}
+        </if>
+        <if test="riceCate!=''">
+            and field_4 like '%${riceCate}%'
+        </if>
+        <if test="cultivationMethod!=''">
+            and field_7 like '%${cultivationMethod}%'
+        </if>
+    </select>
+
+    <select id="crop_01_02_table_04_03Analysis_1" parameterType="String" resultType="crop_01_02_table_04_03">
+        select
+        <foreach collection="sqlFields" separator="," item="item">
+            ${item}
+        </foreach>
+        from crop_01_01_table_04_03 where in_use = '3' and modification_time like '%${year}%'
+        <if test="areaCate!=null and areaCate!=''">
+            and field_3 = #{areaCate}
+        </if>
+        <if test="strainCategory!=''">
+            and field_5 like '%${strainCategory}%'
+        </if>
+        <if test="cultivationMethod!=''">
+            and field_7 like '%${cultivationMethod}%'
+        </if>
+    </select>
+
+    <select id="crop_01_02_table_10_01Analysis_1" parameterType="String" resultType="crop_01_02_table_10_01">
+        select field_8_1,field_8_3,field_9_1,field_9_3,field_10_1,field_10_3,field_11_1,field_11_3,field_12_1,field_12_3
+        from crop_01_02_table_10_01 where field_2 = #{monitoring_code}  and in_use = '3' and modification_time like '%${year}%'
+    </select>
+
+    <!--    <select id="crop_01_02_table_10_01Analysis_1" parameterType="String" resultType="crop_01_02_table_10_01">-->
+    <!--        select * from crop_01_02_table_10_01 where field_2 = #{monitoring_code} and in_use = '3' limit 1-->
+    <!--    </select>-->
+    <select id="getMonitoringCode_2" parameterType="String" resultType="String">
+        select field_1 from crop_01_02_table_02_02 where field_2_2 = #{area} and in_use = '3' and modification_time like '%${year}%'
+    </select>
+
+    <select id="crop_01_02_table_10_01Analysis_2" resultType="crop_01_02_table_10_01">
+        select field_3,
+        <foreach collection="sqlFields" separator="," item="item">
+            ${item}
+        </foreach>
+        from crop_01_02_table_10_01 where  in_use = '3' and modification_time like '%${year}%'
+        <if test="areaCate!=null and areaCate!=''">
+            and field_3 = #{areaCate}
+        </if>
+    </select>
+
+
+
+
+</mapper>

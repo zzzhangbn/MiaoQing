@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ricemonitoring.mapper.PestDataBaseMapper">
+
+
+    <insert id="addPestInfor" >
+       insert into screen_pestCure(pest_picture,pest_name,performance,medication)
+       values(#{picUrl},#{pestName},#{performance},#{drugName})
+    </insert>
+
+
+</mapper>

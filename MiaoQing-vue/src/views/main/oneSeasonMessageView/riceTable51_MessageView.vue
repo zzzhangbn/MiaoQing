@@ -1,0 +1,1062 @@
+<template>
+  
+    <div class="totalRange">
+      <div class="tableRange">
+            <div class="searchBox">            
+              <el-row>
+                <el-col :span="11">
+                  <!-- <template>
+                    <el-select v-model="areaType" clearable  placeholder="地区类型" style="width:150px">
+                      <el-option
+                        v-for="item in areaTypes"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+
+                    <el-select v-model="county" clearable  style="width:150px; margin-left: 20px;" placeholder="县（市、区）">
+                      <el-option
+                        v-for="item in countys"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+
+                    <el-select v-model="riceType" clearable  style="width:150px; margin-left: 20px;" placeholder="稻作类型">
+                      <el-option
+                        v-for="item in riceTypes"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-model="plantWay" clearable  style="width:150px; margin-left: 20px;" placeholder="栽植方式">
+                      <el-option
+                        v-for="item in plantWays"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    
+                  </template> -->
+                </el-col>
+              <el-col :span="4">
+                <!-- <el-button type="info" @click="reSet">重置</el-button>
+                <el-button type="info" @click="searchInfo">查询</el-button> -->
+              </el-col>
+              <el-col :span="3">
+                <el-button  type="info" plain @click="handleDownload">全部数据导出Excel</el-button>
+              </el-col>
+              </el-row>
+            </div>
+            <div class="tableStyle">
+
+              <el-row>
+                <div style="text-align:center;font-size:17px;font-weight:bolder;color:black;margin-bottom:10px">
+                  <span>{{tableLabel}}</span>
+                </div>
+              </el-row>
+
+              <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border :header-cell-style="headerStyle" :row-class-name="tableRowClassName" style="width: 100%" :row-style="{height: '30px'}" :cell-style="{padding:'0',fontSize:'4px'}" row-key="id" stripe>
+                <!-- <el-table-column :label="tableLabel" align="center"> -->
+                  <el-table-column align="center" fixed type="index" :index="countMethod" width="50%" label="序号" />
+                  <el-table-column align="center" prop="field_1" width="105%" label="县（市、区）" fixed/>
+                  <el-table-column align="center" prop="field_2" width="110%" label="监测点代码" fixed/>
+                  <el-table-column align="center" prop="field_3" label="地区类型" />
+                  <el-table-column align="center" prop="field_4" label="稻作类型" />
+                  <el-table-column align="center" prop="field_5" width="150%" label="品种名称" />
+                  <el-table-column align="center" prop="field_6" width="110%" label="栽植方式" />
+                  <el-table-column align="center" label="够苗期">
+                    <el-table-column align="center" prop="field_7_1" width="90%" label="时间" />
+                    <el-table-column align="center" prop="field_7_2" width="120%" label="叶绿素（SPAD）" />
+                    <el-table-column align="center" prop="field_7_3" width="120%" label="氮含量（mg/g）" />
+                    <el-table-column align="center" prop="field_7_4" width="110%" label="叶面温度（℃）" />
+                    <el-table-column align="center" prop="field_7_5" width="130%" label="叶面湿度（%RH）" />
+                    <el-table-column align="center" prop="field_7_6" width="100%" label="植物名称" />
+                    <el-table-column align="center" prop="field_7_7" width="140%" label="化肥中氮含量（%）" />
+                    <el-table-column align="center" prop="field_7_8" width="155%" label="化肥中氮的利用率（%）" />
+                    <el-table-column align="center" prop="field_7_9" label="目标产量" />
+                    <el-table-column align="center" prop="field_7_10" label="施肥量" />
+                  </el-table-column>
+                  <el-table-column align="center" label="拔节期">
+                    <el-table-column align="center" prop="field_8_1" width="90%" label="时间" />
+                    <el-table-column align="center" prop="field_8_2" width="120%"  label="叶绿素（SPAD）" />
+                    <el-table-column align="center" prop="field_8_3" width="120%" label="氮含量（mg/g）" />
+                    <el-table-column align="center" prop="field_8_4" width="110%" label="叶面温度（℃）" />
+                    <el-table-column align="center" prop="field_8_5" width="130%" label="叶面湿度（%RH）" />
+                    <el-table-column align="center" prop="field_8_6" width="100%" label="植物名称" />
+                    <el-table-column align="center" prop="field_8_7" width="140%" label="化肥中氮含量（%）" />
+                    <el-table-column align="center" prop="field_8_8" width="155%"  label="化肥中氮的利用率（%）" />
+                    <el-table-column align="center" prop="field_8_9" label="目标产量" />
+                    <el-table-column align="center" prop="field_8_10" label="施肥量" />
+                  </el-table-column>
+                  <el-table-column align="center" label="孕穗期1">
+                    <el-table-column align="center" prop="field_9_1" width="90%" label="时间" />
+                    <el-table-column align="center" prop="field_9_2" width="120%" label="叶绿素（SPAD）" />
+                    <el-table-column align="center" prop="field_9_3" width="120%" label="氮含量（mg/g）" />
+                    <el-table-column align="center" prop="field_9_4" width="110%" label="叶面温度（℃）" />
+                    <el-table-column align="center" prop="field_9_5" width="130%" label="叶面湿度（%RH）" />
+                    <el-table-column align="center" prop="field_9_6" width="100%" label="植物名称" />
+                    <el-table-column align="center" prop="field_9_7" width="140%" label="化肥中氮含量（%）" />
+                    <el-table-column align="center" prop="field_9_8" width="155%" label="化肥中氮的利用率（%）" />
+                    <el-table-column align="center" prop="field_9_9" label="目标产量" />
+                    <el-table-column align="center" prop="field_9_10" label="施肥量" />
+                  </el-table-column>
+                  <el-table-column align="center" label="孕穗期2">
+                    <el-table-column align="center" prop="field_10_1" width="90%" label="时间" />
+                    <el-table-column align="center" prop="field_10_2" width="120%" label="叶绿素（SPAD）" />
+                    <el-table-column align="center" prop="field_10_3" width="120%" label="氮含量（mg/g）" />
+                    <el-table-column align="center" prop="field_10_4" width="110%" label="叶面温度（℃）" />
+                    <el-table-column align="center" prop="field_10_5" width="130%" label="叶面湿度（%RH）" />
+                    <el-table-column align="center" prop="field_10_6" width="100%" label="植物名称" />
+                    <el-table-column align="center" prop="field_10_7" width="140%" label="化肥中氮含量（%）" />
+                    <el-table-column align="center" prop="field_10_8" width="155%" label="化肥中氮的利用率（%）" />
+                    <el-table-column align="center" prop="field_10_9" label="目标产量" />
+                    <el-table-column align="center" prop="field_10_10" label="施肥量" />
+                  </el-table-column>
+                  <el-table-column align="center" label="抽穗期">
+                    <el-table-column align="center" prop="field_11_1" width="90%" label="时间" />
+                    <el-table-column align="center" prop="field_11_2" width="120%"  label="叶绿素（SPAD）" />
+                    <el-table-column align="center" prop="field_11_3" width="120%" label="氮含量（mg/g）" />
+                    <el-table-column align="center" prop="field_11_4" width="110%" label="叶面温度（℃）" />
+                    <el-table-column align="center" prop="field_11_5" width="130%" label="叶面湿度（%RH）" />
+                    <el-table-column align="center" prop="field_11_6" width="100%" label="植物名称" />
+                    <el-table-column align="center" prop="field_11_7" width="140%" label="化肥中氮含量（%）" />
+                    <el-table-column align="center" prop="field_11_8" width="155%" label="化肥中氮的利用率（%）" />
+                    <el-table-column align="center" prop="field_11_9" label="目标产量" />
+                    <el-table-column align="center" prop="field_11_10" label="施肥量" />
+                  </el-table-column>
+                  <!-- <el-table-column align="center"  fixed="right" width="120px" label="操作" v-if="years == currentyear">
+                    <template slot-scope="scope">
+                      <el-button type="danger" size="mini" v-if="scope.row.in_use == 3" @click="backRevision(scope.$index,scope.row)" >退回修改</el-button>
+                    </template>
+                  </el-table-column>   -->
+                <!-- </el-table-column> -->
+              </el-table>
+              <el-pagination class="fy"
+                      layout="prev,pager, next, total"
+                      @current-change="handleCurrentChange"
+                      :current-page="currentPage"
+                      :page-size="pagesize"
+                      :total="dataNum"
+                      background
+                      >
+              </el-pagination>
+              <el-dialog title="退回原因:" :visible.sync="dialogVisible" width="40%">
+                <el-input type="textarea" :rows="4" v-model="reason1" auto-complete="off"></el-input>                
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="dialogVisible = false">取 消</el-button>
+                  <el-popover placement="top" width="200" v-model="visibleBack"><p>是否确认退回修改?</p>
+                    <div style="text-align: right; margin: 10px">
+                      <el-button size="mini" type="text" @click="visibleBack = false">取 消</el-button>
+                      <el-button type="primary" size="mini" @click="confirmBack()">确 定</el-button>
+                    </div>
+                    <el-button slot="reference" type="primary" >确  定</el-button>
+                  </el-popover>
+                </div>
+              </el-dialog>
+            </div>
+          </div>
+      <div class="button">
+        <!-- <el-button type="success" @click="returnPage">返  回</el-button> -->
+        <router-link :to="{ name: '/tablemain',params:{activeNum:2}}">
+                    <el-button type="success"  style="float:right;margin:20px 0 0 0">返回</el-button>
+        </router-link>
+      </div>
+  
+     </div>
+  
+</template>
+
+
+<script>
+import axios from 'axios'
+import * as math from 'mathjs'
+export default {
+  inject: ['reload'],
+  data() {
+    return {       
+      activeName:'1',      
+      // 表格组件 列表数据对象
+      //表中数据
+      tableData: [],
+      //表名
+      tableLabel:'',
+      tableName:'crop_01_01_table_05_01',
+      //县的option
+      countys:[],
+      county: '',
+      //地区类型option
+      areaTypes:[],
+      areaType: '',
+      //稻作类型option
+      riceTypes:[],
+      riceType: '',
+      //品系类型option
+      categorys:[],
+      category: '',
+      //栽植方式option
+      plantWays:[],
+      plantWay: '',
+      //分页
+      pagesize:15,  //每页的数据条数
+      currentPage:1,//默认开始页面
+      dataNum:0,
+      //暂存参数
+      areas:'',
+      citys:'',
+      years:'',
+      //退回原因对话框
+      dialogVisible:false,
+      visibleBack:false,
+      //系统时间
+      currentyear:'',
+      systemTime:'',
+      recordData:[],
+      reason1:'',
+    };
+  },
+  created() {
+    this.initData();
+  },
+  methods: {
+    //初始化数据
+    initData() {
+      var myDate = new Date();
+      this.currentyear = myDate.getFullYear();
+      this.areas = this.$route.query.area;
+      this.citys = this.$route.query.city;
+      this.years = this.$route.query.year;
+      this.years = myDate.getFullYear();
+      this.tableLabel= this.years+"年度叶片含氮测定仪导出数据表";
+      this.getTableData();
+      this.getCountySelection();
+    }, 
+    //切换tabs
+    handleClick(tab,event){
+      //console.log(tab,event);
+    }, 
+    //获取时间
+    //获取系统时间
+    getMyTime(){
+      var myDate = new Date();
+      //console.log(myDate);
+      var sep1 = "-";
+      var sep2 = ":";
+      var month = myDate.getMonth() + 1;
+      var day = myDate.getDate();
+      var hour = myDate.getHours();
+      var minute = myDate.getMinutes();
+      var second = myDate.getSeconds();
+      if (month >= 1 && month <= 9) {
+            month = "0" + month;
+      };
+      if (day >= 0 && day <= 9) {
+            day = "0" + day;
+      };
+      if(hour >= 0 && hour <= 9) {
+          hour = "0" + hour;
+      };
+      if(minute >= 0 && minute <= 9) {
+          minute = "0" + minute;
+      };
+      if(second >= 0 && second <= 9) {
+          second = "0" + second;
+      };
+      var myTime = myDate.getFullYear() + sep1 + month + sep1 + day
+            + " " + hour + sep2 + minute + sep2 + second;
+      //console.log(myTime);
+      this.systemTime = myTime;
+    },  
+    //表头跨列隐藏
+    headerStyle({row,column,rowIndex,columnIndex}){
+     // //console.log('row:',row,'column:', column, 'rowIndex:',rowIndex, 'columnIndex:',columnIndex );
+         if(rowIndex === 2){ 
+           return {display:"none"};
+        };
+        if(rowIndex === 0){
+          return{height:'0',padding:'2px',fontSize:'7px',background:'#6E8B3D',color:'#FFFFFF',}
+        }
+        if(rowIndex==1 ){
+            // return {background:'#eee',color:'#606266'};
+            return{height:'0',padding:'1px',fontSize:'5px',background:'#6E8B3D',color:'#FFFFFF'};
+        };
+    },
+    //表头颜色
+    tableRowClassName({row,rowIndex}){
+        if(rowIndex === 6){
+          return '.header-row';
+        }
+        return '';
+    },
+    //处理小数点
+    add(value) {
+        const precision = 14
+        return Number(math.format(value, precision))
+    },
+    //获取表数据
+    getTableData(){
+       const _this = this;
+       var temp = localStorage.getItem("ms_username");
+       axios({
+          url: '/getRiceTable51_Message',
+          method:'post',
+          params:{
+            area:temp,
+            areaType:this.areas,
+            year:this.years
+           }
+       }).then(res=>{
+         //console.log(res.data);
+         // _this.tableData=res.data;
+          var totalTableData=res.data;
+          if(totalTableData.length != 0){
+            var sums = [];//存占比
+            var total =[];//存各面积和
+            //num1为总面积
+            var num1=0;var num2=0;var num3=0;var num4=0;var num5=0;var num6=0;var num7=0;var num8=0;var num9=0;var num10=0;
+            var num11=0;var num12=0;var num13=0;var num14=0;var num15=0;var num16=0;var num17=0;var num18=0;var num19=0;var num20=0;
+            var num21=0;var num22=0;var num23=0;var num24=0;var num25=0;var num26=0;var num27=0;var num28=0;var num29=0;var num30=0;
+            var num31=0;var num32=0;var num33=0;var num34=0;var num35=0;var num36=0;var num37=0;var num38=0;var num39=0;var num40=0;
+            //合计行计算
+            for(var i=0; i<totalTableData.length; i++){
+              if(totalTableData[i].field_7_2 === ''){
+                totalTableData[i].field_7_2 = 0;
+              }
+              num1 = _this.add(num1*1+totalTableData[i].field_7_2*1);
+
+              if(totalTableData[i].field_7_3 === ''){
+                totalTableData[i].field_7_3 = 0;
+              }
+              num2 = _this.add(num2*1+totalTableData[i].field_7_3*1);
+
+              if(totalTableData[i].field_7_4 === ''){
+                totalTableData[i].field_7_4 = 0;
+              }
+              num3 = _this.add(num3*1+totalTableData[i].field_7_4*1);
+
+              if(totalTableData[i].field_7_5 === ''){
+                totalTableData[i].field_7_5 = 0;
+              }
+              num4 = _this.add(num4*1+totalTableData[i].field_7_5*1);
+
+              if(totalTableData[i].field_7_7 === ''){
+                totalTableData[i].field_7_7 = 0;
+              }
+              num5 = _this.add(num5*1+totalTableData[i].field_7_7*1);
+
+              if(totalTableData[i].field_7_8 === ''){
+                totalTableData[i].field_7_8 = 0;
+              }
+              num6 = _this.add(num6*1+totalTableData[i].field_7_8*1);
+
+              if(totalTableData[i].field_7_9 === ''){
+                totalTableData[i].field_7_9 = 0;
+              }
+              num7 = _this.add(num7*1+totalTableData[i].field_7_9*1);
+
+              if(totalTableData[i].field_7_10 === ''){
+                totalTableData[i].field_7_10 = 0;
+              }
+              num8 = _this.add(num8*1+totalTableData[i].field_7_10*1);
+
+              if(totalTableData[i].field_8_2 === ''){
+                totalTableData[i].field_8_2 = 0;
+              }
+              num9 = _this.add(num9*1+totalTableData[i].field_8_2*1);
+
+              if(totalTableData[i].field_8_3 === ''){
+                totalTableData[i].field_8_3 = 0;
+              }
+              num10 = _this.add(num10*1+totalTableData[i].field_8_3*1);
+
+              if(totalTableData[i].field_8_4 === ''){
+                totalTableData[i].field_8_4 = 0;
+              }
+              num11 = _this.add(num11*1+totalTableData[i].field_8_4*1);
+
+              if(totalTableData[i].field_8_5 === ''){
+                totalTableData[i].field_8_5 = 0;
+              }
+              num12 = _this.add(num12*1+totalTableData[i].field_8_5*1);
+
+              if(totalTableData[i].field_8_7 === ''){
+                totalTableData[i].field_8_7 = 0;
+              }
+              num13 = _this.add(num13*1+totalTableData[i].field_8_7*1);
+
+              if(totalTableData[i].field_8_8 === ''){
+                totalTableData[i].field_8_8 = 0;
+              }
+              num14 = _this.add(num14*1+totalTableData[i].field_8_8*1);
+
+              if(totalTableData[i].field_8_9 === ''){
+                totalTableData[i].field_8_9 = 0;
+              }
+              num15 = _this.add(num15*1+totalTableData[i].field_8_9*1);
+
+              if(totalTableData[i].field_8_10 === ''){
+                totalTableData[i].field_8_10 = 0;
+              }
+              num16 = _this.add(num16*1+totalTableData[i].field_8_10*1);
+
+              if(totalTableData[i].field_9_2 === ''){
+                totalTableData[i].field_9_2 = 0;
+              }
+              num17 = _this.add(num17*1+totalTableData[i].field_9_2*1);
+
+              if(totalTableData[i].field_9_3 === ''){
+                totalTableData[i].field_9_3 = 0;
+              }
+              num18 = _this.add(num18*1+totalTableData[i].field_9_3*1);
+
+              if(totalTableData[i].field_9_4 === ''){
+                totalTableData[i].field_9_4 = 0;
+              }
+              num19 = _this.add(num19*1+totalTableData[i].field_9_4*1);
+
+              if(totalTableData[i].field_9_5 === ''){
+                totalTableData[i].field_9_5 = 0;
+              }
+              num20 = _this.add(num20*1+totalTableData[i].field_9_5*1);
+
+              if(totalTableData[i].field_9_7 === ''){
+                totalTableData[i].field_9_7 = 0;
+              }
+              num21 = _this.add(num21*1+totalTableData[i].field_9_7*1);
+
+              if(totalTableData[i].field_9_8 === ''){
+                totalTableData[i].field_9_8 = 0;
+              }
+              num22 = _this.add(num22*1+totalTableData[i].field_9_8*1);
+
+              if(totalTableData[i].field_9_9 === ''){
+                totalTableData[i].field_9_9 = 0;
+              }
+              num23 = _this.add(num23*1+totalTableData[i].field_9_9*1);
+
+              if(totalTableData[i].field_9_10 === ''){
+                totalTableData[i].field_9_10 = 0;
+              }
+              num24 = _this.add(num24*1+totalTableData[i].field_9_10*1);
+
+              if(totalTableData[i].field_10_2 === ''){
+                totalTableData[i].field_10_2 = 0;
+              }
+              num25 = _this.add(num25*1+totalTableData[i].field_10_2*1);
+
+              if(totalTableData[i].field_10_3 === ''){
+                totalTableData[i].field_10_3 = 0;
+              }
+              num26 = _this.add(num26*1+totalTableData[i].field_10_3*1);
+
+              if(totalTableData[i].field_10_4 === ''){
+                totalTableData[i].field_10_4 = 0;
+              }
+              num27 = _this.add(num27*1+totalTableData[i].field_10_4*1);
+
+              if(totalTableData[i].field_10_5 === ''){
+                totalTableData[i].field_10_5 = 0;
+              }
+              num28 = _this.add(num28*1+totalTableData[i].field_10_5*1);
+
+              if(totalTableData[i].field_10_7 === ''){
+                totalTableData[i].field_10_7 = 0;
+              }
+              num29 = _this.add(num29*1+totalTableData[i].field_10_7*1);
+
+              if(totalTableData[i].field_10_8 === ''){
+                totalTableData[i].field_10_8 = 0;
+              }
+              num30 = _this.add(num30*1+totalTableData[i].field_10_8*1);
+
+              if(totalTableData[i].field_10_9 === ''){
+                totalTableData[i].field_10_9 = 0;
+              }
+              num31 = _this.add(num31*1+totalTableData[i].field_10_9*1);
+
+              if(totalTableData[i].field_10_10 === ''){
+                totalTableData[i].field_10_10 = 0;
+              }
+              num32 = _this.add(num32*1+totalTableData[i].field_10_10*1);
+
+              if(totalTableData[i].field_11_2 === ''){
+                totalTableData[i].field_11_2 = 0;
+              }
+              num33 = _this.add(num33*1+totalTableData[i].field_11_2*1);
+
+              if(totalTableData[i].field_11_3 === ''){
+                totalTableData[i].field_11_3 = 0;
+              }
+              num34 = _this.add(num34*1+totalTableData[i].field_11_3*1);
+
+              if(totalTableData[i].field_11_4 === ''){
+                totalTableData[i].field_11_4 = 0;
+              }
+              num35 = _this.add(num35*1+totalTableData[i].field_11_4*1);
+
+              if(totalTableData[i].field_11_5 === ''){
+                totalTableData[i].field_11_5 = 0;
+              }
+              num36 = _this.add(num36*1+totalTableData[i].field_11_5*1);
+
+              if(totalTableData[i].field_11_7 === ''){
+                totalTableData[i].field_11_7 = 0;
+              }
+              num37 = _this.add(num37*1+totalTableData[i].field_11_7*1);
+
+              if(totalTableData[i].field_11_8 === ''){
+                totalTableData[i].field_11_8 = 0;
+              }
+              num38 = _this.add(num38*1+totalTableData[i].field_11_8*1);
+
+              if(totalTableData[i].field_11_9 === ''){
+                totalTableData[i].field_11_9 = 0;
+              }
+              num39 = _this.add(num39*1+totalTableData[i].field_11_9*1);
+
+              if(totalTableData[i].field_11_10 === ''){
+                totalTableData[i].field_11_10 = 0;
+              }
+              num40 = _this.add(num40*1+totalTableData[i].field_11_10*1);
+
+            };
+            //各品种面积总和
+            //console.log('1111');
+            total[0]=num1;total[1]=num2;total[2]=num3;total[3]=num4;total[4]=num5;total[5]=num6;total[6]=num7;total[7]=num8;total[8]=num9;total[9]=num10;
+            total[10]=num11;total[11]=num12;total[12]=num13;total[13]=num14;total[14]=num15;total[15]=num16;total[16]=num17;total[17]=num18;total[18]=num19;total[19]=num20;
+            total[20]=num21;total[21]=num22;total[22]=num23;total[23]=num24;total[24]=num25;total[25]=num26;total[26]=num27;total[27]=num28;total[28]=num29;total[29]=num30;
+            total[30]=num31;total[31]=num32;total[32]=num33;total[33]=num34;total[34]=num35;total[35]=num36;total[36]=num37;total[37]=num38;total[38]=num39;total[39]=num40;
+            //console.log(total[12]);
+            var dataLength = totalTableData.length;
+            for(var i=0; i<total.length; i++){
+              if(total[i] === 0){
+                sums[i]='--';
+              }else{
+                sums[i] = (Number(total[i])/Number(dataLength)).toFixed(2);
+              }
+            }
+            //console.log(sums);
+        
+            //辅助数组
+            totalTableData.push({"field_1":'合计',"field_2":'--',"field_3":'--',"field_4":'--',"field_5":'--',"field_6":'--',
+                                "field_7_1":'--',"field_7_2":sums[0],"field_7_3":sums[1],"field_7_4":sums[2],"field_7_5":sums[3],
+                                "field_7_6":'--',"field_7_7":sums[4],"field_7_8":sums[5],"field_7_9":sums[6],"field_7_10":sums[7], 
+                                "field_8_1":'--',"field_8_2":sums[8],"field_8_3":sums[9],"field_8_4":sums[10],"field_8_5":sums[11],
+                                "field_8_6":'--',"field_8_7":sums[12],"field_8_8":sums[13],"field_8_9":sums[14],"field_8_10":sums[15],
+                                "field_9_1":'--',"field_9_2":sums[16],"field_9_3":sums[17],"field_9_4":sums[18],"field_9_5":sums[19],
+                                "field_9_6":'--',"field_9_7":sums[20],"field_9_8":sums[21],"field_9_9":sums[22],"field_9_10":sums[23],
+                                "field_10_1":'--',"field_10_2":sums[24],"field_10_3":sums[25],"field_10_4":sums[26],"field_10_5":sums[27],
+                                "field_10_6":'--',"field_10_7":sums[28],"field_10_8":sums[29],"field_10_9":sums[30],"field_10_10":sums[31],
+                                "field_11_1":'--',"field_11_2":sums[32],"field_11_3":sums[33],"field_11_4":sums[34],"field_11_5":sums[35],
+                                "field_11_6":'--',"field_11_7":sums[36],"field_11_8":sums[37],"field_11_9":sums[38],"field_11_10":sums[39],                 
+                                "in_use":'--'})
+            _this.dataNum = totalTableData.length - 1;
+          }else{
+            _this.dataNum = 0;
+          };
+          _this.tableData = totalTableData;
+          //console.log(_this.tableData);
+       }).catch(err=>{
+         //return this.$message.error("查询数据失败！");
+       });
+    },
+    //获取下拉框内容
+    getCountySelection(){
+      const _this = this;
+      axios({
+          url: '/getCounty1',
+          method:'get',
+          // params:{
+          //   tabName:table
+          // }
+       }).then(res=>{
+          var optionData=[];
+          optionData=res.data;
+          //县数据
+          var countyData = [];
+          //地区数据
+          var areaData = [];
+          //稻作数据
+          var riceData = [];
+          //品系数据
+          var categoryData = [];
+          //栽植数据
+          var plantData = [];
+          ////console.log(optionData);
+          for(var i=0; i<optionData.length; ++i){
+              if(optionData[i].caption === "县（市、区）"){
+                countyData.push({"label":optionData[i].list,"value":optionData[i].list});
+              };
+              if(optionData[i].caption === "地区类型"){
+                areaData.push({"label":optionData[i].list,"value":optionData[i].list});
+              };
+              if(optionData[i].caption === "稻作类型"){
+                riceData.push({"label":optionData[i].list,"value":optionData[i].list});
+              };
+               if(optionData[i].caption === "品系类型"){
+                categoryData.push({"label":optionData[i].list,"value":optionData[i].list});
+              };
+              if(optionData[i].caption === "栽植方式"){
+                plantData.push({"label":optionData[i].list,"value":optionData[i].list});
+              };
+          };
+          // //console.log(countyData);
+          // //console.log(areaData);
+          // //console.log(riceData);
+          _this.countys = countyData;
+          _this.areaTypes = areaData;
+          _this.riceTypes = riceData;
+          _this.categorys = categoryData;
+          _this.plantWays = plantData;
+
+       }).catch(err=>{
+         //return this.$message.error("查询数据失败！");
+       });
+    },
+     
+    //重置
+    reSet(){
+      this.areaType='';
+      this.county='';
+      this.riceType='';
+      this.plantWay='';
+      this.getTableData();
+    },
+    //搜索
+    searchInfo(){ 
+      const _this = this;
+      axios({
+        url:'/getSeekInfo51',
+        method:'post',
+        params:{county:this.county,
+                areaType:this.areaType,
+                riceType:this.riceType,
+                category:this.category,
+                plantWay:this.plantWay,
+                year:this.years,
+        }
+      }).then(res=>{
+           var totalTableData=res.data;
+          if(totalTableData.length != 0){
+            var sums = [];//存占比
+            var total =[];//存各面积和
+            //num1为总面积
+            var num1=0;var num2=0;var num3=0;var num4=0;var num5=0;var num6=0;var num7=0;var num8=0;var num9=0;var num10=0;
+            var num11=0;var num12=0;var num13=0;var num14=0;var num15=0;var num16=0;var num17=0;var num18=0;var num19=0;var num20=0;
+            var num21=0;var num22=0;var num23=0;var num24=0;var num25=0;var num26=0;var num27=0;var num28=0;var num29=0;var num30=0;
+            var num31=0;var num32=0;var num33=0;var num34=0;var num35=0;var num36=0;var num37=0;var num38=0;var num39=0;var num40=0;
+            //合计行计算
+            for(var i=0; i<totalTableData.length; i++){
+              if(totalTableData[i].field_7_2 === ''){
+                totalTableData[i].field_7_2 = 0;
+              }
+              num1 = _this.add(num1*1+totalTableData[i].field_7_2*1);
+
+              if(totalTableData[i].field_7_3 === ''){
+                totalTableData[i].field_7_3 = 0;
+              }
+              num2 = _this.add(num2*1+totalTableData[i].field_7_3*1);
+
+              if(totalTableData[i].field_7_4 === ''){
+                totalTableData[i].field_7_4 = 0;
+              }
+              num3 = _this.add(num3*1+totalTableData[i].field_7_4*1);
+
+              if(totalTableData[i].field_7_5 === ''){
+                totalTableData[i].field_7_5 = 0;
+              }
+              num4 = _this.add(num4*1+totalTableData[i].field_7_5*1);
+
+              if(totalTableData[i].field_7_7 === ''){
+                totalTableData[i].field_7_7 = 0;
+              }
+              num5 = _this.add(num5*1+totalTableData[i].field_7_7*1);
+
+              if(totalTableData[i].field_7_8 === ''){
+                totalTableData[i].field_7_8 = 0;
+              }
+              num6 = _this.add(num6*1+totalTableData[i].field_7_8*1);
+
+              if(totalTableData[i].field_7_9 === ''){
+                totalTableData[i].field_7_9 = 0;
+              }
+              num7 = _this.add(num7*1+totalTableData[i].field_7_9*1);
+
+              if(totalTableData[i].field_7_10 === ''){
+                totalTableData[i].field_7_10 = 0;
+              }
+              num8 = _this.add(num8*1+totalTableData[i].field_7_10*1);
+
+              if(totalTableData[i].field_8_2 === ''){
+                totalTableData[i].field_8_2 = 0;
+              }
+              num9 = _this.add(num9*1+totalTableData[i].field_8_2*1);
+
+              if(totalTableData[i].field_8_3 === ''){
+                totalTableData[i].field_8_3 = 0;
+              }
+              num10 = _this.add(num10*1+totalTableData[i].field_8_3*1);
+
+              if(totalTableData[i].field_8_4 === ''){
+                totalTableData[i].field_8_4 = 0;
+              }
+              num11 = _this.add(num11*1+totalTableData[i].field_8_4*1);
+
+              if(totalTableData[i].field_8_5 === ''){
+                totalTableData[i].field_8_5 = 0;
+              }
+              num12 = _this.add(num12*1+totalTableData[i].field_8_5*1);
+
+              if(totalTableData[i].field_8_7 === ''){
+                totalTableData[i].field_8_7 = 0;
+              }
+              num13 = _this.add(num13*1+totalTableData[i].field_8_7*1);
+
+              if(totalTableData[i].field_8_8 === ''){
+                totalTableData[i].field_8_8 = 0;
+              }
+              num14 = _this.add(num14*1+totalTableData[i].field_8_8*1);
+
+              if(totalTableData[i].field_8_9 === ''){
+                totalTableData[i].field_8_9 = 0;
+              }
+              num15 = _this.add(num15*1+totalTableData[i].field_8_9*1);
+
+              if(totalTableData[i].field_8_10 === ''){
+                totalTableData[i].field_8_10 = 0;
+              }
+              num16 = _this.add(num16*1+totalTableData[i].field_8_10*1);
+
+              if(totalTableData[i].field_9_2 === ''){
+                totalTableData[i].field_9_2 = 0;
+              }
+              num17 = _this.add(num17*1+totalTableData[i].field_9_2*1);
+
+              if(totalTableData[i].field_9_3 === ''){
+                totalTableData[i].field_9_3 = 0;
+              }
+              num18 = _this.add(num18*1+totalTableData[i].field_9_3*1);
+
+              if(totalTableData[i].field_9_4 === ''){
+                totalTableData[i].field_9_4 = 0;
+              }
+              num19 = _this.add(num19*1+totalTableData[i].field_9_4*1);
+
+              if(totalTableData[i].field_9_5 === ''){
+                totalTableData[i].field_9_5 = 0;
+              }
+              num20 = _this.add(num20*1+totalTableData[i].field_9_5*1);
+
+              if(totalTableData[i].field_9_7 === ''){
+                totalTableData[i].field_9_7 = 0;
+              }
+              num21 = _this.add(num21*1+totalTableData[i].field_9_7*1);
+
+              if(totalTableData[i].field_9_8 === ''){
+                totalTableData[i].field_9_8 = 0;
+              }
+              num22 = _this.add(num22*1+totalTableData[i].field_9_8*1);
+
+              if(totalTableData[i].field_9_9 === ''){
+                totalTableData[i].field_9_9 = 0;
+              }
+              num23 = _this.add(num23*1+totalTableData[i].field_9_9*1);
+
+              if(totalTableData[i].field_9_10 === ''){
+                totalTableData[i].field_9_10 = 0;
+              }
+              num24 = _this.add(num24*1+totalTableData[i].field_9_10*1);
+
+              if(totalTableData[i].field_10_2 === ''){
+                totalTableData[i].field_10_2 = 0;
+              }
+              num25 = _this.add(num25*1+totalTableData[i].field_10_2*1);
+
+              if(totalTableData[i].field_10_3 === ''){
+                totalTableData[i].field_10_3 = 0;
+              }
+              num26 = _this.add(num26*1+totalTableData[i].field_10_3*1);
+
+              if(totalTableData[i].field_10_4 === ''){
+                totalTableData[i].field_10_4 = 0;
+              }
+              num27 = _this.add(num27*1+totalTableData[i].field_10_4*1);
+
+              if(totalTableData[i].field_10_5 === ''){
+                totalTableData[i].field_10_5 = 0;
+              }
+              num28 = _this.add(num28*1+totalTableData[i].field_10_5*1);
+
+              if(totalTableData[i].field_10_7 === ''){
+                totalTableData[i].field_10_7 = 0;
+              }
+              num29 = _this.add(num29*1+totalTableData[i].field_10_7*1);
+
+              if(totalTableData[i].field_10_8 === ''){
+                totalTableData[i].field_10_8 = 0;
+              }
+              num30 = _this.add(num30*1+totalTableData[i].field_10_8*1);
+
+              if(totalTableData[i].field_10_9 === ''){
+                totalTableData[i].field_10_9 = 0;
+              }
+              num31 = _this.add(num31*1+totalTableData[i].field_10_9*1);
+
+              if(totalTableData[i].field_10_10 === ''){
+                totalTableData[i].field_10_10 = 0;
+              }
+              num32 = _this.add(num32*1+totalTableData[i].field_10_10*1);
+
+              if(totalTableData[i].field_11_2 === ''){
+                totalTableData[i].field_11_2 = 0;
+              }
+              num33 = _this.add(num33*1+totalTableData[i].field_11_2*1);
+
+              if(totalTableData[i].field_11_3 === ''){
+                totalTableData[i].field_11_3 = 0;
+              }
+              num34 = _this.add(num34*1+totalTableData[i].field_11_3*1);
+
+              if(totalTableData[i].field_11_4 === ''){
+                totalTableData[i].field_11_4 = 0;
+              }
+              num35 = _this.add(num35*1+totalTableData[i].field_11_4*1);
+
+              if(totalTableData[i].field_11_5 === ''){
+                totalTableData[i].field_11_5 = 0;
+              }
+              num36 = _this.add(num36*1+totalTableData[i].field_11_5*1);
+
+              if(totalTableData[i].field_11_7 === ''){
+                totalTableData[i].field_11_7 = 0;
+              }
+              num37 = _this.add(num37*1+totalTableData[i].field_11_7*1);
+
+              if(totalTableData[i].field_11_8 === ''){
+                totalTableData[i].field_11_8 = 0;
+              }
+              num38 = _this.add(num38*1+totalTableData[i].field_11_8*1);
+
+              if(totalTableData[i].field_11_9 === ''){
+                totalTableData[i].field_11_9 = 0;
+              }
+              num39 = _this.add(num39*1+totalTableData[i].field_11_9*1);
+
+              if(totalTableData[i].field_11_10 === ''){
+                totalTableData[i].field_11_10 = 0;
+              }
+              num40 = _this.add(num40*1+totalTableData[i].field_11_10*1);
+
+            };
+            //各品种面积总和
+            //console.log('1111');
+            total[0]=num1;total[1]=num2;total[2]=num3;total[3]=num4;total[4]=num5;total[5]=num6;total[6]=num7;total[7]=num8;total[8]=num9;total[9]=num10;
+            total[10]=num11;total[11]=num12;total[12]=num13;total[13]=num14;total[14]=num15;total[15]=num16;total[16]=num17;total[17]=num18;total[18]=num19;total[19]=num20;
+            total[20]=num21;total[21]=num22;total[22]=num23;total[23]=num24;total[24]=num25;total[25]=num26;total[26]=num27;total[27]=num28;total[28]=num29;total[29]=num30;
+            total[30]=num31;total[31]=num32;total[32]=num33;total[33]=num34;total[34]=num35;total[35]=num36;total[36]=num37;total[37]=num38;total[38]=num39;total[39]=num40;
+            //console.log(total);
+            var dataLength = totalTableData.length;
+            for(var i=0; i<total.length; i++){
+              if(total[i] === 0){
+                sums[i]='--';
+              }else{
+                sums[i] = (Number(total[i])/Number(dataLength)).toFixed(2);
+              }
+            }
+            //console.log(sums);
+        
+            //辅助数组
+            totalTableData.push({"field_1":'合计',"field_2":'--',"field_3":'--',"field_4":'--',"field_5":'--',"field_6":'--',
+                                "field_7_1":'--',"field_7_2":sums[0],"field_7_3":sums[1],"field_7_4":sums[2],"field_7_5":sums[3],
+                                "field_7_6":'--',"field_7_7":sums[4],"field_7_8":sums[5],"field_7_9":sums[6],"field_7_10":sums[7], 
+                                "field_8_1":'--',"field_8_2":sums[8],"field_8_3":sums[9],"field_8_4":sums[10],"field_8_5":sums[11],
+                                "field_8_6":'--',"field_8_7":sums[12],"field_8_8":sums[13],"field_8_9":sums[14],"field_8_10":sums[15],
+                                "field_9_1":'--',"field_9_2":sums[16],"field_9_3":sums[17],"field_9_4":sums[18],"field_9_5":sums[19],
+                                "field_9_6":'--',"field_9_7":sums[20],"field_9_8":sums[21],"field_9_9":sums[22],"field_9_10":sums[23],
+                                "field_10_1":'--',"field_10_2":sums[24],"field_10_3":sums[25],"field_10_4":sums[26],"field_10_5":sums[27],
+                                "field_10_6":'--',"field_10_7":sums[28],"field_10_8":sums[29],"field_10_9":sums[30],"field_10_10":sums[31],
+                                "field_11_1":'--',"field_11_2":sums[32],"field_11_3":sums[33],"field_11_4":sums[34],"field_11_5":sums[35],
+                                "field_11_6":'--',"field_11_7":sums[36],"field_11_8":sums[37],"field_11_9":sums[38],"field_11_10":sums[39],                 
+                                "in_use":'--'})
+            _this.dataNum = totalTableData.length - 1;
+          }else{
+            _this.dataNum = 0;
+          }; 
+          _this.tableData = totalTableData;
+          //console.log(_this.tableData);
+       }).catch(err=>{
+         //return this.$message.error("查询数据失败！");
+       });
+    },
+    //分页
+    handleCurrentChange:function(currentPage){
+      this.currentPage = currentPage;
+      //console.log(this.currentPage);
+    },
+    //分页后序号连续处理
+    countMethod(index){
+       return (this.currentPage-1)*this.pagesize + index +1;
+    },
+    //分页后序号连续处理
+    countMethod(index){
+       return (this.currentPage-1)*this.pagesize + index +1;
+    },
+    //导出excel
+    // 导出Excel点击方法
+    handleDownload() {
+      // this.downloadLoading = true // 加载遮罩层开启
+      //console.log("11111");
+      const {export_json_to_excel} = require('../../rice/excel/Export2Excel2'); //引入文件
+      //console.log("2222")
+      const th1 = [[this.tableLabel, '', '', '', '', '', '', '', '', '', '', '', '', 
+                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 
+                    '', '','', '', '', '', '', '', '','', '', '', '', '', '', '','', '', '', '',],
+                    ['县（市、区）', '监测点代码', '地区类型', '稻作类型', '品种名称', '栽植方式', 
+                    '够苗期', '', '', '', '', '', '', '', '', '',
+                    '拔节期', '', '', '', '', '', '', '', '', '', 
+                    '孕穗期1', '', '', '', '', '', '', '', '', '', 
+                    '孕穗期2', '', '', '', '', '', '', '', '', '', 
+                    '抽穗期', '', '', '', '', '','', '', '', '',]] //对应表格一级输出的title
+      const header = []//三级
+      const th2 =  [['', '', '', '', '', '', 
+                    '时间', '叶绿素（SPAD）', '氮含量（mg/g）', '叶面温度（℃）', '叶面湿度（%RH）', '植物名称', '化肥中氮含量（%）', '化肥中氮的利用率（%）', '目标产量', '施肥量',
+                    '时间', '叶绿素（SPAD）', '氮含量（mg/g）', '叶面温度（℃）', '叶面湿度（%RH）', '植物名称', '化肥中氮含量（%）', '化肥中氮的利用率（%）', '目标产量', '施肥量',
+                    '时间', '叶绿素（SPAD）', '氮含量（mg/g）', '叶面温度（℃）', '叶面湿度（%RH）', '植物名称', '化肥中氮含量（%）', '化肥中氮的利用率（%）', '目标产量', '施肥量',
+                    '时间', '叶绿素（SPAD）', '氮含量（mg/g）', '叶面温度（℃）', '叶面湿度（%RH）', '植物名称', '化肥中氮含量（%）', '化肥中氮的利用率（%）', '目标产量', '施肥量',
+                    '时间', '叶绿素（SPAD）', '氮含量（mg/g）', '叶面温度（℃）', '叶面湿度（%RH）', '植物名称', '化肥中氮含量（%）', '化肥中氮的利用率（%）', '目标产量', '施肥量',]] //对应表格三级输出的title
+      const filterVal = ['field_1', 'field_2', 'field_3', 'field_4', 'field_5', 'field_6',
+                        'field_7_1', 'field_7_2', 'field_7_3', 'field_7_4', 'field_7_5', 'field_7_6', 'field_7_7', 'field_7_8', 'field_7_9', 'field_7_10',
+                        'field_8_1', 'field_8_2', 'field_8_3', 'field_8_4', 'field_8_5', 'field_8_6', 'field_8_7', 'field_8_8', 'field_8_9', 'field_8_10',
+                        'field_9_1', 'field_9_2', 'field_9_3', 'field_9_4', 'field_9_5', 'field_9_6', 'field_9_7', 'field_9_8', 'field_9_9', 'field_9_10',
+                        'field_10_1', 'field_10_2', 'field_10_3', 'field_10_4', 'field_10_5', 'field_10_6', 'field_10_7', 'field_10_8', 'field_10_9', 'field_10_10',
+                        'field_11_1', 'field_11_2', 'field_11_3', 'field_11_4', 'field_11_5', 'field_11_6', 'field_11_7', 'field_11_8', 'field_11_9', 'field_11_10',
+                         ] // 对应表格tableData输出的数据
+      //console.log("th1:"+th1,"th2:"+th2,"filterVal:"+filterVal);
+      //进行所有表头的单元格合并，建议一行一行来，不然容易整乱
+      const merges = [
+        "A1:BD1",
+        "A2:A3",
+        "B2:B3",
+        "C2:C3",
+        "D2:D3",
+        "E2:E3",
+        "F2:F3",
+        "G2:P2",
+        "Q2:Z2",
+        "AA2:AJ2",
+        "AK2:AT2",
+        "AU2:BD2"
+      ];
+      const list = this.tableData;
+      //console.log(list);
+      const data = this.formatJson(filterVal, list);
+      //console.log(data);
+      export_json_to_excel(th1, th2, header, data, this.tableLabel, merges);
+      // this.downloadLoading = false // 加载遮罩层结束
+    },
+    // 将JSON转换成map
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]))
+    },
+    returnPage(){
+      var diqu = this.areas;
+      var xian = this.citys;
+      var nian = this.years;
+      //console.log(diqu,xian,nian)
+      if(xian ==''){
+        this.$router.push({path:'/dataHome',query:{area:diqu,city:xian,year:nian}});
+      }else if((xian=='宣州区') || (xian=='庐江县')){
+        this.$router.push({path:'/dataHome2',query:{area:diqu,city:xian,year:nian}});
+      }else if((xian=='怀宁县') || (xian=='枞阳县')){
+        this.$router.push({path:'/dataHome2',query:{area:diqu,city:xian,year:nian}});
+      }else if((xian=='贵池区')|| (xian=='南陵县')){
+        this.$router.push({path:'/dataHome2',query:{area:diqu,city:xian,year:nian}});
+      }else{
+        this.$router.push({path:'/dataHome1',query:{area:diqu,city:xian,year:nian}});
+      };
+    },
+    //退回
+    backRevision(index,row){
+      this.recordData=row;
+      this.dialogVisible=true;
+    },
+    confirmBack(){
+      const _this=this;
+      this.visibleBack=false;
+      this.dialogVisible=false;
+      this.getMyTime();
+      var recordTime = this.systemTime;
+      var returnTableName = this.tableName;
+      var recordCounty=this.recordData.field_1;
+      var recordId = this.recordData.id;
+      var recordPeople = this.recordData.people;
+      var recordReason = this.reason1;
+      //将原因显示置空
+      this.reason1='';
+      ////console.log(recordTime,recordId,returnTableName,recordPeople,recordCounty,recordReason);
+      axios({
+        url:'/returnRecord',
+        menthod:'post',
+        params:{returnTableName: returnTableName,
+                recordCounty:recordCounty,
+                recordId:recordId,
+                recordReason:recordReason,
+                recordTime:recordTime,
+                recordPeople:recordPeople
+                }
+      }).then(res=>{
+        _this.getTableData();
+       }).catch(err=>{
+         //return this.$message.error("查询数据失败！");
+       });
+    },
+
+  }
+};
+</script>
+
+<style scoped> 
+  .totalRange{
+    width:100%;
+    height: 100%;
+  }
+  .button{
+    position: absolute;right: 60px;top: 105px;
+    color:black;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .totalRange .tableRange{
+    width:99%;
+    margin: 0 auto;
+  }
+  .searchBox{
+    width: 100%;
+    height: 50px;
+  }
+  .tableStyle{
+    width: 100%;
+    height: 90%;
+    margin-top: 5px;
+  }
+  .otherStyle{
+    width: 100%;
+    height: 70px;
+    margin-top: 260px;
+  }
+  .el-table .header-row{
+    background: '#FF0000';
+    
+  }
+  .fy{
+    text-align: left;
+    margin-top: 10px;
+  }
+</style>
+
+
+

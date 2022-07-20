@@ -1,0 +1,1986 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ricemonitoring.mapper.TableMapper">
+        <!--  namesoace对应相应的mapper  -->
+    <select id="getTableHeader" resultType="table_header">
+        select * from table_header where second_name = #{tableName} order by id
+    </select>
+        <!--   获取下拉框内容     -->
+    <select id="getCounty1" resultType="sum_select_list">
+        select * from sum_select_list where rice_type = "one" and in_use = 1
+    </select>
+    <select id="getCitys" resultType="sum_select_list">
+        select * from sum_select_list where caption = "县（市、区）" and rice_type = "one" and in_use = 1
+    </select>
+    <select id="getCitys2" resultType="sum_select_list">
+        select * from sum_select_list where caption = "县（市、区）" and rice_type = "double" and in_use = 1
+    </select>
+
+    <!--退还表1-2记录-->
+    <select id="returnTable12" resultType="String">
+        update crop_01_01_table_01_02 set in_use = 2 where county = #{recordCounty} and modification_time like "%"#{year}"%"
+    </select>
+    <!--退还双季稻表1-2记录-->
+    <select id="returnTableTwo12" resultType="String">
+        update crop_01_02_table_01_02 set in_use = 2 where county = #{recordCounty} and modification_time like "%"#{year}"%"
+    </select>
+    <!--退还记录-->
+    <select id="returnRecord" resultType="String">
+        update ${returnTableName} set in_use = 2 where id = #{recordId}
+    </select>
+    <select id="recordAdd" resultType="String">
+        insert into table_record_back(record_table,record_county,record_id,reason,back_time,record_people,in_use)
+        values(#{returnTableName},#{recordCounty},#{recordId},#{recordReason},#{recordTime},#{recordPeople},0)
+    </select>
+    <!--确定表1-2记录-->
+    <select id="confirmTable12" resultType="String">
+        update crop_01_01_table_01_02 set in_use = 3 where county = #{recordCounty} and modification_time like "%"#{year}"%"
+    </select>
+    <select id="confirmTableTwo12" resultType="String">
+        update crop_01_02_table_01_02 set in_use = 3 where county = #{recordCounty} and modification_time like "%"#{year}"%"
+    </select>
+    <select id="confirmPass" resultType="String">
+        update ${returnTableName} set in_use = 3 where id = #{recordId}
+    </select>
+<!--监测点审核-->
+    <select id="getPointData" resultType="crop_01_01_table_02_01">
+        select * from crop_01_01_table_02_01 where in_use=1 and modification_time like "%"#{year}"%" order by field_5 desc
+    </select>
+    <!--监测点不通过-->
+    <update id="noPassPoint">
+        update crop_01_01_table_02_01
+        <set>
+            in_use = 2
+        </set>
+        where id = #{recordId}
+    </update>
+    <!--监测点通过-->
+    <update id="PassPoint">
+        update crop_01_01_table_02_01
+        <set>
+            field_1 = #{pointCode},
+            in_use = 3,
+            continue_use = 0
+        </set>
+        where id = #{recordId}
+    </update>
+    <select id="getRiceTable21" resultType="crop_01_01_table_02_01">
+        select * from crop_01_01_table_02_01 where in_use in (1,2,3,4) and field_4 =#{county} and field_1 like "%"#{county}"%" group by field_1
+    </select>
+<!-- 監測點信息插入到表2-2中-->
+    <insert id="insertInfoToRiceTable0202" parameterType="crop_01_01_table_02_01">
+        insert into crop_01_01_table_02_02(field_1,field_2_1,field_2_2,field_2_3,field_2_4,field_2_5,field_3_1,field_3_2,field_3_3,field_3_4,field_3_5,field_3_6,field_3_7,field_3_8,field_3_9,field_3_10,field_4_1,field_4_2,
+        field_4_3,field_5_1,field_5_2,field_5_3,field_5_4,field_5_5,field_5_6,field_5_7,field_5_8,field_5_9,field_5_10,field_5_11,field_5_12,modification_time,people,in_use)
+        values(#{field_1},#{field_3},#{field_4},#{field_5},#{field_6},#{field_7},#{field_8},#{field_9},#{field_10},#{field_11},#{field_12},#{field_13},#{field_14},#{field_15},#{field_16},#{field_17},#{field_18},#{field_19},#{field_20},#{field_21},
+        #{field_22},#{field_23},#{field_24},#{field_25},#{field_26},#{field_27},#{field_28},#{field_29},#{field_30},#{field_31},#{field_32},#{modification_time},#{people},3)
+
+    </insert>
+    <!-- 監測點信息更新到表2-2中-->
+    <update id="updateInfoToRiceTable0202" parameterType="crop_01_01_table_02_01">
+            update crop_01_01_table_02_02 set field_2_1=#{field_3},field_2_2=#{field_4},field_2_3=#{field_5},field_2_4=#{field_6},field_2_5=#{field_7},field_3_1=#{field_8},
+            field_3_2=#{field_9},field_3_3=#{field_10},field_3_4=#{field_11},field_3_5=#{field_12},field_3_6=#{field_13},field_3_7=#{field_14},field_3_8=#{field_15},field_3_9=#{field_16},field_3_10=#{field_17},
+            field_4_1=#{field_18},field_4_2=#{field_19},field_4_3=#{field_20},field_5_1=#{field_21},field_5_2=#{field_22},field_5_3=#{field_23},field_5_4=#{field_24},field_5_5=#{field_25},field_5_6=#{field_26},
+            field_5_7=#{field_27},field_5_8=#{field_28},field_5_9=#{field_29},field_5_10=#{field_30},field_5_11=#{field_31},field_5_12=#{field_32},modification_time=#{modification_time},
+            people=#{people},in_use=3 where field_1=#{field_1} and modification_time like CONCAT(left(#{modification_time},4),'%')
+     </update>
+    <!--  获取表1-1数据  -->
+    <select id="getRiceTable11" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable11" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSearchRiceAudit11" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <select id="getSeekInfo11" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <!-- 获取表1-2数据   -->
+    <select id="getPageRiceTable12" parameterType="Map" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+        order by county,id
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceTable12" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and county = #{county}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+        order by county
+    </select>
+<!--    数据审核辅助-->
+    <select id="getAuditRiceTable12" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where id in (select min(id) from crop_01_01_table_01_02 where in_use=1 and modification_time like "%"#{year}"%" group by county)
+    </select>
+    <!--    数据审核-->
+    <select id="getSearchRiceAudit12" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where id in (select min(id) from crop_01_01_table_01_02 where in_use=1 and modification_time like "%"#{year}"%" group by county)
+        <if test="params1 != null and params1 != '' ">
+            and county like "%"#{params1}"%"
+        </if>
+    </select>
+
+    <select id="getAssist12" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where in_use=1 and county=#{auditCounty} and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo12" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and county = #{county}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+        order by county
+
+    </select>
+    <!-- 获取表2-2数据   -->
+    <select id="getRiceTable22" resultType="crop_01_01_table_02_02">
+        select * from crop_01_01_table_02_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_2_2 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+<!--    数据审核-->
+    <select id="getAuditRiceTable22" resultType="crop_01_01_table_02_02">
+        select * from crop_01_01_table_02_02 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo22" resultType="crop_01_01_table_02_02">
+        select * from crop_01_01_table_02_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_2_2 = #{county}
+        </if>
+        <if test="city != null and city != '' ">
+            and field_2_1 = #{city}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+
+
+    </select>
+    <!-- 获取表3-1数据   -->
+    <select id="getRiceTable31" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable31" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo31" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit31" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表3-2数据   -->
+    <select id="getRiceTable32" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable32" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo32" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit32" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表3-3数据   -->
+    <select id="getRiceTable33" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable33" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo33" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit33" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表4-1数据   -->
+    <select id="getRiceTable41" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <!--    增加单季稻监测点数据查看部分  -->
+    <!-- 获取表4-1数据   -->
+    <select id="getRiceTable41_Message" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where  (in_use=1 or in_use=3)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable41" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo41" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_5 = #{category}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_7 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit41" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表4-2数据   -->
+    <select id="getRiceTable42" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable42" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo42" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_5 = #{category}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_7 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit42" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表4-3数据   -->
+    <select id="getRiceTable43" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+<!--    增加监测点信息查看部分-->
+    <!-- 获取监测点所有地块4-3数据   -->
+    <select id="getRiceTable43_Message" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable43" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo43" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_5 = #{category}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_7 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit43" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表4-4数据   -->
+    <select id="getRiceTable44" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <!-- 增加监测点信息查看获取表4-4数据   -->
+    <select id="getRiceTable44_Message" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable44" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo44" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_5 = #{category}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_7 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit44" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表5-1数据   -->
+    <select id="getRiceTable51" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getRiceTable51_Message" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where in_use=3
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable51" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo51" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_6 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit51" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表6-1数据   -->
+    <select id="getRiceTable61" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <!-- 获取表6-1数据   -->
+    <select id="getRiceTable61_Message" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable61" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo61" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_6 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit61" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表6-2数据   -->
+    <select id="getRiceTable62" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getRiceTable62_Message" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable62" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo62" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_6 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit62" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表6-3数据   -->
+    <select id="getRiceTable63" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getRiceTable63_Message" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable63" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo63" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_6 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit63" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表6-4数据   -->
+    <select id="getRiceTable64" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getRiceTable64_Message" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable64" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo64" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_6 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit64" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表6-5数据   -->
+    <select id="getRiceTable65" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getRiceTable65_Message" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable65" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo65" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_4 = #{riceType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_6 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit65" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表7-1数据   -->
+    <select id="getRiceTable71" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable71" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo71" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit71" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表7-2数据   -->
+    <select id="getRiceTable72" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable72" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo72" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit72" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表7-3数据   -->
+    <select id="getRiceTable73" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable73" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo73" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit73" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表8-1数据   -->
+    <select id="getRiceTable81" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+        order by field_1
+    </select>
+    <select id="getRiceTable81_Message" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable81" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo81" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit81" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表9-1数据   -->
+    <select id="getRiceTable91" resultType="crop_01_01_table_09_01">
+        select * from crop_01_01_table_09_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable91" resultType="crop_01_01_table_09_01">
+        select * from crop_01_01_table_09_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo91" resultType="crop_01_01_table_09_01">
+        select * from crop_01_01_table_09_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <!-- 获取表9-2数据   -->
+    <select id="getRiceTable92" resultType="crop_01_01_table_09_02">
+        select * from crop_01_01_table_09_02 where (field_1_2 = #{currentYear} or field_1_2= #{previousYear}) and in_use=3
+        <if test="county != null and county != '' ">
+            and field_1_1 = #{county}
+        </if>
+    </select>
+    <select id="getCurrentCounty" resultType="crop_01_01_table_09_02">
+        select field_1_1 from crop_01_01_table_09_02 where field_1_2 = #{year} and in_use=3
+        <if test="county != null and county != '' ">
+            and field_1_1 = #{county}
+        </if>
+    </select>
+    <select id="getAuditRiceTable92" resultType="crop_01_01_table_09_02">
+        select * from crop_01_01_table_09_02 where field_1_2 = #{currentYear} and in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo92" resultType="crop_01_01_table_09_02">
+        select * from crop_01_01_table_09_02 where (field_1_2 = #{currentYear} or field_1_2= #{previousYear}) and in_use=3
+        <if test="county != null and county != '' ">
+            and field_1_1 = #{county}
+        </if>
+    </select>
+
+
+<!--  获取表9-3分页数据   -->
+    <select id="getPageRiceTable93" parameterType="Map" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <!-- 获取表9-3数据   -->
+    <select id="getRiceTable93" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable93" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekPageInfo93" parameterType="Map" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_3 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_4 = #{category}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getSeekInfo93" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_3 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_4 = #{category}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit93" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表9-4数据   -->
+    <select id="getRiceTable94" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable94" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo94" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_3 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_4 = #{category}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit94" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表9-5数据   -->
+    <select id="getRiceTable95" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable95" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo95" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_3 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_4 = #{category}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit95" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表9-6数据   -->
+    <select id="getRiceTable96" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable96" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo96" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_2 = #{areaType}
+        </if>
+        <if test="riceType != null and riceType != '' ">
+            and field_3 = #{riceType}
+        </if>
+        <if test="category != null and category != ''">
+            and field_4 = #{category}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit96" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表9-7数据   -->
+    <select id="getRiceTable97" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getRiceTable97_Message" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable97" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo97" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_5 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit97" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+    <!-- 获取表10-1数据   -->
+    <select id="getRiceTable101" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getRiceTable101_Message" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where (in_use=3 or in_use=1)
+        <if test="area != null and area != '' ">
+            and people = #{area}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getAuditRiceTable101" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where in_use=1 and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getSeekInfo101" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where in_use=3
+        <if test="county != null and county != '' ">
+            and field_1 = #{county}
+        </if>
+        <if test="areaType != null and areaType != '' ">
+            and field_3 = #{areaType}
+        </if>
+        <if test="plantWay != null and plantWay != ''">
+            and field_5 = #{plantWay}
+        </if>
+        <if test="year != null and year != '' ">
+            and modification_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getSearchRiceAudit101" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where in_use=1 and modification_time like "%"#{time}"%" and field_1 like "%"#{params1}"%"
+    </select>
+
+<!--    数据插入审核表-->
+    <insert id="getAuditData" parameterType="table_audit">
+        insert into table_audit(county,table_name,chinese_name,record_id,time, record_people,in_use)
+        values(#{city},#{name},#{chinese},#{dataId},#{times},#{auditPeople},'3')
+    </insert>
+<!--    查找审核数据-->
+    <select id="getNoAuditAllData" resultType="table_audit">
+        select * from table_audit order by time desc
+    </select>
+    <select id="getNoAuditAllInfo" resultType="table_audit">
+        select * from table_audit where 1=1
+        <if test="params1 != null and params1 != '' ">
+            and county like "%"#{params1}"%"
+        </if>
+        order by time desc
+    </select>
+    <select id="getNoAuditAllDataMap" parameterType="Map" resultType="table_audit">
+        select * from table_audit where 1=1
+        <if test="params1 != null and params1 != '' ">
+            and county like "%"#{params1}"%"
+        </if>
+        order by time,id
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+<!--    删除重复数据-->
+    <delete id="deleteRepeatData">
+        delete from table_audit where id not in (select t.min_id from
+        (select min(id) as min_id from table_audit group by county,table_name,record_id,time) as t)
+    </delete>
+<!--    删除辅助审核表中对应数据-->
+    <delete id="deleteRecord">
+        delete from table_audit where id=#{rowId} and table_name=#{rowName} and time=#{rowTime}
+    </delete>
+<!--    获取一季稻的县名-->
+    <select id="getCountyInfo" resultType="sum_select_list">
+        select * from sum_select_list where caption="县（市、区）" and rice_type="one" and in_use=1
+    </select>
+<!--    退回记录查询-->
+    <select id="getBackInfoAll" resultType="table_record_back" >
+        select record_table,record_county,record_id,reason,back_time,record_people,table_record_back.in_use,
+         second_name from table_record_back,table_second_name where table_record_back.in_use = 0
+        and table_second_name.second_name_id = table_record_back.record_table
+        <if test="year != null and year != '' ">
+            and  table_record_back.back_time like "%"#{year}"%"
+        </if>
+    </select>
+    <select id="getBackInfo" parameterType="Map" resultType="table_record_back">
+        select record_table,record_county,record_id,reason,back_time,record_people,table_record_back.in_use,
+        second_name from table_record_back,table_second_name where table_record_back.in_use = 0
+        and table_second_name.second_name_id = table_record_back.record_table
+        <if test="year != null and year != '' ">
+            and  table_record_back.back_time like "%"#{year}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+<!--    退回记录搜索-->
+    <select id="getAllBackData" parameterType="Map" resultType="table_record_back">
+        select record_table,record_county,record_id,reason,back_time,record_people,table_record_back.in_use,
+         second_name from table_record_back,table_second_name where table_record_back.in_use = 0
+        and table_second_name.second_name_id = table_record_back.record_table
+        <if test="params1 != null and params1 != '' ">
+            and table_second_name.second_name like "%"#{params1}"%"
+        </if>
+        <if test="params2 != null and params2 != '' ">
+            and table_record_back.record_county like "%"#{params2}"%"
+        </if>
+        <if test="year != null and year != '' ">
+            and  table_record_back.back_time like "%"#{year}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getBackSeeKInfo"  resultType="table_record_back">
+        select record_table,record_county,record_id,reason,back_time,record_people,table_record_back.in_use,
+        second_name from table_record_back,table_second_name where table_record_back.in_use = 0
+        and table_second_name.second_name_id = table_record_back.record_table
+        <if test="params1 != null and params1 != '' ">
+            and table_second_name.second_name like "%"#{params1}"%"
+        </if>
+        <if test="params2 != null and params2 != '' ">
+            and table_record_back.record_county like "%"#{params2}"%"
+        </if>
+        <if test="year != null and year != '' ">
+            and  table_record_back.back_time like "%"#{year}"%"
+        </if>
+    </select>
+
+
+
+<!--    生育期进度-->
+    <select id="getPeriod" resultType="crop_01_01_table_04_04">
+        select field_1,field_2,field_8,field_9,field_10,field_fennie,field_11,field_12,field_13,field_14,field_15,field_16,field_17,field_18 from crop_01_01_table_04_04 where (in_use=3 or in_use=1) and modification_time like "%"#{year}"%"
+    </select>
+
+<!--获取未审核各表数据分页-->
+    <select id="getRiceAudit11" parameterType="Map" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+
+    </select>
+    <select id="getRiceAudit12" parameterType="Map" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and county like "%"#{params1}"%"
+        </if>
+<!--        <if test="start!=null and size!=null">-->
+<!--            limit #{start},#{size}-->
+<!--        </if>-->
+    </select>
+    <select id="getRiceAudit31" parameterType="Map" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit32" parameterType="Map" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit33" parameterType="Map" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit41" parameterType="Map" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit42" parameterType="Map" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit43" parameterType="Map" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit44" parameterType="Map" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit51" parameterType="Map" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit61" parameterType="Map" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit62" parameterType="Map" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit63" parameterType="Map" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit64" parameterType="Map" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit65" parameterType="Map" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit71" parameterType="Map" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit72" parameterType="Map" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit73" parameterType="Map" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit81" parameterType="Map" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit93" parameterType="Map" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit94" parameterType="Map" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit95" parameterType="Map" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit96" parameterType="Map" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit97" parameterType="Map" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getRiceAudit101" parameterType="Map" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where in_use=1  and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+<!--    搜索获取所有未审核各表数据-->
+    <select id="searchRiceAudit11" parameterType="Map" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+
+    </select>
+    <select id="searchRiceAudit12" parameterType="Map" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where in_use=1 and modification_time like "%"#{year}"%"
+        <if test="params1 != null and params1 != '' ">
+            and county like "%"#{params1}"%"
+        </if>
+    </select>
+    <select id="searchRiceAudit31" parameterType="Map" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit32" parameterType="Map" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit33" parameterType="Map" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit41" parameterType="Map" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit42" parameterType="Map" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit43" parameterType="Map" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit44" parameterType="Map" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit51" parameterType="Map" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit61" parameterType="Map" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit62" parameterType="Map" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit63" parameterType="Map" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit64" parameterType="Map" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit65" parameterType="Map" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit71" parameterType="Map" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit72" parameterType="Map" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit73" parameterType="Map" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit81" parameterType="Map" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit93" parameterType="Map" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit94" parameterType="Map" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit95" parameterType="Map" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit96" parameterType="Map" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit97" parameterType="Map" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where in_use=1 and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="searchRiceAudit101" parameterType="Map" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where in_use=1  and modification_time like "%"#{time}"%"
+        <if test="params1 != null and params1 != '' ">
+            and field_1 like "%"#{params1}"%"
+        </if>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+<!--    处理未上报县数-->
+    <select id="getRice11" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice12" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice31" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice32" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice33" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice41" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice42" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice43" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice44" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice51" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice61" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice62" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice63" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice64" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice65" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice71" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice72" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice73" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice81" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice91" resultType="crop_01_01_table_09_01">
+        select * from crop_01_01_table_09_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice92" resultType="crop_01_01_table_09_02">
+        select * from crop_01_01_table_09_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice93" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice94" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice95" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice96" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice97" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getRice101" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%"
+    </select>
+    <select id="getTabName" resultType="table_second_name">
+        select * from table_second_name where in_use=1 and rice_type="one" and second_name_id not in ("crop_01_01_table_02_01","crop_01_01_table_02_02","crop_01_01_table_09_01","crop_01_01_table_09_02")
+    </select>
+    <!--    删除所有审核表-->
+    <delete id="deleteAudit" >
+        delete from table_audit where in_use = '3'
+    </delete>
+    <delete id="deleteAudit2" >
+        delete from table_audit_2 where in_use = '3'
+    </delete>
+
+    <!--    删除监测点信息-->
+    <update id="deleteTable1" >
+            update ${name} set in_use = 4 where field_1 = #{pointCode} and people=#{people} and modification_time like "%"#{year}"%"
+    </update>
+    <update id="deleteTable2" >
+            update ${name} set in_use = 4 where field_2 = #{pointCode} and people=#{people} and modification_time like "%"#{year}"%"
+    </update>
+
+    <!--    处理各个监测县未上报表-->
+    <select id="getCountyName" resultType="sum_select_list">
+        select list,rice_type from sum_select_list where caption = "县（市、区）"
+    </select>
+
+
+
+    <!--    处理未上报县数-->
+    <select id="getTable11" resultType="crop_01_01_table_01_01">
+        select * from crop_01_01_table_01_01 where (in_use=1 or in_use=3) and  modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable12" resultType="crop_01_01_table_01_02">
+        select * from crop_01_01_table_01_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and county = #{countyName}
+    </select>
+    <select id="getTable31" resultType="crop_01_01_table_03_01">
+        select * from crop_01_01_table_03_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable32" resultType="crop_01_01_table_03_02">
+        select * from crop_01_01_table_03_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable33" resultType="crop_01_01_table_03_03">
+        select * from crop_01_01_table_03_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable41" resultType="crop_01_01_table_04_01">
+        select * from crop_01_01_table_04_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable42" resultType="crop_01_01_table_04_02">
+        select * from crop_01_01_table_04_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable43" resultType="crop_01_01_table_04_03">
+        select * from crop_01_01_table_04_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable44" resultType="crop_01_01_table_04_04">
+        select * from crop_01_01_table_04_04 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable51" resultType="crop_01_01_table_05_01">
+        select * from crop_01_01_table_05_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable61" resultType="crop_01_01_table_06_01">
+        select * from crop_01_01_table_06_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable62" resultType="crop_01_01_table_06_02">
+        select * from crop_01_01_table_06_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable63" resultType="crop_01_01_table_06_03">
+        select * from crop_01_01_table_06_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable64" resultType="crop_01_01_table_06_04">
+        select * from crop_01_01_table_06_04 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable65" resultType="crop_01_01_table_06_05">
+        select * from crop_01_01_table_06_05 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable71" resultType="crop_01_01_table_07_01">
+        select * from crop_01_01_table_07_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable72" resultType="crop_01_01_table_07_02">
+        select * from crop_01_01_table_07_02 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable73" resultType="crop_01_01_table_07_03">
+        select * from crop_01_01_table_07_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable81" resultType="crop_01_01_table_08_01">
+        select * from crop_01_01_table_08_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable93" resultType="crop_01_01_table_09_03">
+        select * from crop_01_01_table_09_03 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable94" resultType="crop_01_01_table_09_04">
+        select * from crop_01_01_table_09_04 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable95" resultType="crop_01_01_table_09_05">
+        select * from crop_01_01_table_09_05 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable96" resultType="crop_01_01_table_09_06">
+        select * from crop_01_01_table_09_06 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable97" resultType="crop_01_01_table_09_07">
+        select * from crop_01_01_table_09_07 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+    <select id="getTable101" resultType="crop_01_01_table_10_01">
+        select * from crop_01_01_table_10_01 where (in_use=1 or in_use=3) and modification_time like "%"#{year}"%" and field_1 = #{countyName}
+    </select>
+
+
+</mapper>

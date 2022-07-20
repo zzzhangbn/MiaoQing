@@ -1,0 +1,477 @@
+<template>
+    <div class="demo-image__placeholder">
+        <template v-if="column_id == ''|| column_id == null">
+            <router-link :to="{name:'/tablemain',params: {activeNum: 2}}">
+                <el-button style="display: inline-block; float: right;margin-top: 1%;margin-right: 1.4%;margin-bottom: 1%;">返回</el-button>
+            </router-link>
+        </template>
+        <template v-if="column_id != ''&& column_id != null">
+        <router-link to='/traceBackData'>
+          <el-button style="display: inline-block; float: right;margin-top: 1%;margin-right: 1.4%;margin-bottom: 1%;">返回</el-button>
+        </router-link>
+      </template>
+
+        <el-button style="display: inline-block; float: right;margin-top: 1%;margin-right: 5.4%;margin-bottom: 1%;" @click="getFormList('1')">提交</el-button>
+        <el-row>
+          <div style="text-align:center;font-size:17px;font-weight:bolder;color:black;margin-bottom:5px">
+            <span>{{tableLabel}}</span>
+          </div>
+        </el-row>
+
+        <el-table :data="data" :header-cell-style="headerStyle">
+            <!-- <el-table-column align="center" fixed type="index" width="50%" :index="countMethod" label="序号" /> -->
+                   
+            <el-table-column align="center" prop="field_1" width="105%" label="县（市、区）" fixed />
+            <el-table-column align="center"  prop="field_2" label="地区类型" fixed />
+            <el-table-column align="center" label="全县面上平均水平	">
+                <el-table-column align="center"  label="总面积（万亩）" width="110%" fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_3_1" @blur.prevent="checkFirstFieldInput($event)" />          
+                </el-table-column>
+                <el-table-column align="center"  label="亩有效穗（万）"  width="110%" fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_3_2" @blur.prevent="checkFirstFieldInput($event)" />
+                 </el-table-column>       
+                 <el-table-column align="center"  label="每穗粒数（粒）"  width="110%"  fixed >       
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_3_3" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>   
+                <el-table-column align="center"  label="结实率（%）"  width="110%"  fixed >     
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_3_4" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>   
+                <el-table-column align="center"  label="千粒重（克）"  width="110%"  fixed >    
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_3_5" @blur.prevent="checkFirstFieldInput($event)" />
+                 </el-table-column>   
+                 <el-table-column align="center"  label="八五折亩理论产量（公斤）"  width="110%"  fixed >    
+                    <template v-if=" data[fieldRowIndex].field_3_2!='' && data[fieldRowIndex].field_3_3!='' && data[fieldRowIndex].field_3_4!='' && data[fieldRowIndex].field_3_5!=''
+                         && data[fieldRowIndex].field_3_2!=null && data[fieldRowIndex].field_3_3!=null && data[fieldRowIndex].field_3_4!=null && data[fieldRowIndex].field_3_5!=null">
+                        <span class="span">{{(Number(data[fieldRowIndex].field_3_2) * Number(data[fieldRowIndex].field_3_3) * Number(data[fieldRowIndex].field_3_4) * Number(data[fieldRowIndex].field_3_5) *0.0001*0.85).toFixed(2)}}</span>
+                     </template>
+                    <template v-if=" data[fieldRowIndex].field_3_2=='' || data[fieldRowIndex].field_3_3=='' || data[fieldRowIndex].field_3_4=='' || data[fieldRowIndex].field_3_5==''
+                        || data[fieldRowIndex].field_3_2==null || data[fieldRowIndex].field_3_3==null || data[fieldRowIndex].field_3_4==null || data[fieldRowIndex].field_3_5==null">
+                        <span style="text-align: center;display:block;" class="span">暂无</span>
+                    </template>
+                 </el-table-column>   
+ 
+            </el-table-column>
+            
+            <el-table-column align="center" label="人工移栽	">
+                <el-table-column align="center"  label="面积（万亩）"  width="110%"  fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_4_1" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="亩有效穗（万）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_4_2" @blur.prevent="checkFirstFieldInput($event)" />        
+                </el-table-column>
+                <el-table-column align="center"  label="每穗粒数（粒）"  width="110%"  fixed >
+                   <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_4_3" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="结实率（%）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_4_4" @blur.prevent="checkFirstFieldInput($event)" />      
+                </el-table-column>
+                <el-table-column align="center"  label="千粒重（克）"  width="110%"  fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_4_5" @blur.prevent="checkFirstFieldInput($event)" />           
+                </el-table-column>
+                <el-table-column align="center"  label="八五折亩理论产量（公斤）"  width="110%"  fixed >
+                     <template v-if=" data[fieldRowIndex].field_4_2!='' && data[fieldRowIndex].field_4_3!='' && data[fieldRowIndex].field_4_4!='' && data[fieldRowIndex].field_4_5!=''
+                        && data[fieldRowIndex].field_4_2!=null && data[fieldRowIndex].field_4_3!=null && data[fieldRowIndex].field_4_4!=null && data[fieldRowIndex].field_4_5!=null">
+                        <span class="span">{{(Number(data[fieldRowIndex].field_4_2) * Number(data[fieldRowIndex].field_4_3) * Number(data[fieldRowIndex].field_4_4) * Number(data[fieldRowIndex].field_4_5)  *0.0001*0.85).toFixed(2)}}</span>
+                    </template>
+                    <template v-if=" data[fieldRowIndex].field_4_2=='' || data[fieldRowIndex].field_4_3=='' || data[fieldRowIndex].field_4_4=='' || data[fieldRowIndex].field_4_5==''
+                        || data[fieldRowIndex].field_4_2==null || data[fieldRowIndex].field_4_3==null || data[fieldRowIndex].field_4_4==null || data[fieldRowIndex].field_4_5==null">
+                        <span style="text-align: center;display:block;" class="span">暂无</span>
+                    </template>       
+                </el-table-column>
+            </el-table-column>
+            <el-table-column align="center" label="机械插秧	">          
+                <el-table-column align="center"  label="面积（万亩）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_5_1" @blur.prevent="checkFirstFieldInput($event)" />                         
+                </el-table-column>
+                <el-table-column align="center"  label="亩有效穗（万）"  width="110%"  fixed >
+                      <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_5_2" @blur.prevent="checkFirstFieldInput($event)" />                      
+                </el-table-column>
+                <el-table-column align="center"  label="每穗粒数（粒）"  width="110%"  fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_5_3" @blur.prevent="checkFirstFieldInput($event)" />                  
+                </el-table-column>
+                <el-table-column align="center"  label="结实率（%）"  width="110%"  fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_5_4" @blur.prevent="checkFirstFieldInput($event)" />                    
+                </el-table-column>
+                <el-table-column align="center"  label="千粒重（克）"  width="110%"  fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_5_5" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="八五折亩理论产量（公斤）"  width="110%"  fixed >
+                    <template v-if=" data[fieldRowIndex].field_5_2!='' && data[fieldRowIndex].field_5_3!='' && data[fieldRowIndex].field_5_4!='' && data[fieldRowIndex].field_5_5!='' &&
+                        data[fieldRowIndex].field_5_2!=null && data[fieldRowIndex].field_5_3!=null && data[fieldRowIndex].field_5_4!=null && data[fieldRowIndex].field_5_5!=null">
+                        <span class="span">{{(Number(data[fieldRowIndex].field_5_2) * Number(data[fieldRowIndex].field_5_3) * Number(data[fieldRowIndex].field_5_4) * Number(data[fieldRowIndex].field_5_5)  *0.0001*0.85).toFixed(2)}}</span>
+                    </template>
+                    <template v-if=" data[fieldRowIndex].field_5_2=='' || data[fieldRowIndex].field_5_3=='' || data[fieldRowIndex].field_5_4=='' || data[fieldRowIndex].field_5_5=='' ||
+                         data[fieldRowIndex].field_5_2==null || data[fieldRowIndex].field_5_3==null || data[fieldRowIndex].field_5_4==null || data[fieldRowIndex].field_5_5==null">
+                         <span style="text-align: center;display:block;" class="span">暂无</span>
+                    </template> 
+                </el-table-column>
+            </el-table-column>
+            <el-table-column align="center" label="盘育抛秧	">           
+                <el-table-column align="center"  label="面积（万亩）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_6_1" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="亩有效穗（万）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_6_2" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="每穗粒数（粒）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_6_3" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="结实率（%）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_6_4" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="千粒重（克）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data.field_6_5" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="八五折亩理论产量（公斤）"  width="110%"  fixed >
+                    <template v-if=" data[fieldRowIndex].field_6_2!='' && data[fieldRowIndex].field_6_3!='' && data[fieldRowIndex].field_6_4!='' && data[fieldRowIndex].field_6_5!='' &&
+                        data[fieldRowIndex].field_6_2!=null && data[fieldRowIndex].field_6_3!=null && data[fieldRowIndex].field_6_4!=null && data[fieldRowIndex].field_6_5!=null">
+                        <span class="span">{{(Number(data[fieldRowIndex].field_6_2) * Number(data[fieldRowIndex].field_6_3) * Number(data[fieldRowIndex].field_6_4) * Number(data[fieldRowIndex].field_6_5) *0.0001*0.85).toFixed(2)}}</span>
+                    </template>
+                    <template v-if=" data[fieldRowIndex].field_6_2=='' || data[fieldRowIndex].field_6_3=='' || data[fieldRowIndex].field_6_4=='' || data[fieldRowIndex].field_6_5=='' ||
+                        data[fieldRowIndex].field_6_2==null || data[fieldRowIndex].field_6_3==null || data[fieldRowIndex].field_6_4==null || data[fieldRowIndex].field_6_5==null">
+                        <span style="text-align: center;display:block;" class="span">暂无</span>
+                    </template> 
+                </el-table-column>
+            </el-table-column>
+            <el-table-column align="center" label="无盘旱育抛秧	">           
+                <el-table-column align="center"  label="面积（万亩）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_7_1" @blur.prevent="checkFirstFieldInput($event)" />      
+                </el-table-column>
+                <el-table-column align="center"  label="亩有效穗（万）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_7_2" @blur.prevent="checkFirstFieldInput($event)" />                   
+                </el-table-column>
+                <el-table-column align="center"  label="每穗粒数（粒）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_7_3" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="结实率（%）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_7_4" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="千粒重（克）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_7_5" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="八五折亩理论产量（公斤）"  width="110%"  fixed >
+                    <template v-if=" data[fieldRowIndex].field_7_2!='' && data[fieldRowIndex].field_7_3!='' && data[fieldRowIndex].field_7_4!='' && data[fieldRowIndex].field_7_5!='' &&
+                        data[fieldRowIndex].field_7_2!=null && data[fieldRowIndex].field_7_3!=null && data[fieldRowIndex].field_7_4!=null && data[fieldRowIndex].field_7_5!=null">
+                         <span class="span">{{(Number(data[fieldRowIndex].field_7_2) * Number(data[fieldRowIndex].field_7_3) * Number(data[fieldRowIndex].field_7_4) * Number(data[fieldRowIndex].field_7_5) *0.0001*0.85).toFixed(2)}}</span>
+                    </template>
+                    <template v-if=" data[fieldRowIndex].field_7_2=='' || data[fieldRowIndex].field_7_3=='' || data[fieldRowIndex].field_7_4=='' || data[fieldRowIndex].field_7_5=='' ||
+                       data[fieldRowIndex].field_7_2==null || data[fieldRowIndex].field_7_3==null || data[fieldRowIndex].field_7_4==null || data[fieldRowIndex].field_7_5==null">
+                         <span style="text-align: center;display:block;" class="span">暂无</span>
+                   </template> 
+                </el-table-column>
+            </el-table-column>
+            <el-table-column align="center" label="撒直播">          
+                <el-table-column align="center"  label="面积（万亩）"  width="110%"  fixed >
+                   <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_8_1" @blur.prevent="checkFirstFieldInput($event)" /> 
+                </el-table-column>
+                <el-table-column align="center"  label="亩有效穗（万）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_8_2" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="每穗粒数（粒）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_8_3" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="结实率（%）"  width="110%"  fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_8_4" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="千粒重（克）"  width="110%"  fixed >
+                     <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_8_5" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="八五折亩理论产量（公斤）"  width="110%"  fixed >
+                    <template v-if=" data[fieldRowIndex].field_8_2!='' && data[fieldRowIndex].field_8_3!='' && data[fieldRowIndex].field_8_4!='' && data[fieldRowIndex].field_8_5!='' &&
+                        data[fieldRowIndex].field_8_2!=null && data[fieldRowIndex].field_8_3!=null && data[fieldRowIndex].field_8_4!=null && data[fieldRowIndex].field_8_5!=null ">
+                        <span class="span">{{(Number(data.field_8_2) * Number(data.field_8_3) * Number(data.field_8_4) * Number(data.field_8_5)  *0.0001*0.85).toFixed(2)}}</span>
+                    </template>
+                    <template v-if=" data[fieldRowIndex].field_8_2=='' || data[fieldRowIndex].field_8_3=='' || data[fieldRowIndex].field_8_4=='' || data[fieldRowIndex].field_8_5==''||
+                        data[fieldRowIndex].field_8_2==null || data[fieldRowIndex].field_8_3==null || data[fieldRowIndex].field_8_4==null || data[fieldRowIndex].field_8_5==null">
+                        <span style="text-align: center;display:block;" class="span">暂无</span>
+                    </template> 
+                </el-table-column>
+            </el-table-column>
+            <el-table-column align="center" label="机条播">           
+                <el-table-column align="center"  label="面积（万亩）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_9_1" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="亩有效穗（万）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_9_2" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="每穗粒数（粒）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_9_3" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="结实率（%）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_9_4" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="千粒重（克）"  width="110%"  fixed >
+                    <input style="background-color: #fff;border-radius: 4px;border: 1px solid #dcdfe6;width: 100%;box-sizing: border-box;color: #606266;outline: 0;padding: 0 15px;font-size: inherit;height: 40px;line-height: 40px;" class="secondFieldDetail" v-model="data[fieldRowIndex].field_9_5" @blur.prevent="checkFirstFieldInput($event)" />
+                </el-table-column>
+                <el-table-column align="center"  label="八五折亩理论产量（公斤）"  width="110%"  fixed >
+                    <template v-if=" data[fieldRowIndex].field_9_2!='' && data[fieldRowIndex].field_9_3!='' && data[fieldRowIndex].field_9_4!='' && data[fieldRowIndex].field_9_5!='' &&
+                        data[fieldRowIndex].field_9_2!=null && data[fieldRowIndex].field_9_3!=null && data[fieldRowIndex].field_9_4!=null && data[fieldRowIndex].field_9_5!=null">
+                        <span class="span">{{(Number(data[fieldRowIndex].field_9_2) * Number(data[fieldRowIndex].field_9_3) * Number(data[fieldRowIndex].field_9_4) * Number(data[fieldRowIndex].field_9_5) *0.0001*0.85).toFixed(2)}}</span>
+                    </template>
+                    <template v-if=" data[fieldRowIndex].field_9_2=='' || data[fieldRowIndex].field_9_3=='' || data[fieldRowIndex].field_9_4=='' || data[fieldRowIndex].field_9_5==''||
+                        data[fieldRowIndex].field_9_2==null || data[fieldRowIndex].field_9_3==null || data[fieldRowIndex].field_9_4==null || data[fieldRowIndex].field_9_5==null">
+                         <span style="text-align: center;display:block;" class="span">暂无</span>
+                    </template> 
+                </el-table-column>
+            </el-table-column>
+        </el-table>
+    </div>
+</template>
+<script src="../../../public/js/Vue.min.js"></script>
+<script>
+    import axios from 'axios'
+    export default {
+        data() {
+            return {
+                tableLabel:'',
+                tableName:'',
+                column_id:'',
+                column_id:'',
+                tableId:'',
+                autoList:[], //存储自动获取内容
+                // temList:'',
+                listArray:[],//存储下拉框列表
+                selectedID:'',//存储选择了哪一个下拉框
+                sumDataList:[],//保存所有表头的输入
+                dataList:[],//保存二级表头的输入
+                headerList:[],//一级表头
+                secondList:[],//存储二级表头内容
+                secondHeaderList:[],//存储有跨列的字段名
+                isOpen:false,//控制表格的前段和后端展开
+                tdWidth:'',//一级表的宽度
+                tdSecondWidth:'',//二级表的宽度
+                tdSecondFieldWidth:'',//二级表头的输入框宽度
+                data:[],
+                detialDialogVisible:false,
+                tableFlag:'',//保存当前点击的字段名
+                fieldColIndex:0,//存储二级字段所在列位置
+                fieldRowIndex:0,//存储二级字段所在行位置
+                testValue:0,
+                getField_1_1:'',//第一行的‘县（市、区）’
+                fieldName:'',//下拉框所属的字段名称
+            }
+        },
+
+        mounted() {
+            // this.initData();
+            // this.getTableData();
+        },
+
+        methods:{
+            //初始化数据
+            initData() {
+                this.tableLabel= "监测县(市、区)水稻单季稻测产表";
+                //this.getHeaderList();
+                //this.getTableData();
+            },
+            //获取表数据
+            getTableData(people,column_id){
+                const _this = this;
+                axios({
+                    url: '/getAllData0703',
+                    method:'get',
+                    params:{
+                        people:people,
+                        column_id:column_id,
+                        beginYear:0,
+                        endYear:0
+                    }
+                }).then(res=>{
+                    // console.log(res.data[0]);
+                    // let data=[];
+                    // for( let i in res.data){
+                    //     data.push(res.data[i])
+                    //     console.log(data[i]);
+                    // }
+                    this.data=res.data;
+                    // console.log(111);
+                    // console.log(this.data[0]);
+                    // console.log(111);
+                    console.log(this.data);
+                }).catch(err=>{
+                    return this.$message.error("查询数据失败！");
+                });
+            },
+            //检查input框的输入是否符合要求
+            checkFirstFieldInput(e){
+                var strValue = e.target.value;
+                if(!isNaN(strValue)){
+                }else{
+                    // e.target.parentNode.nextSibling.innerHTML = "X";
+                    e.target.value = "";
+                    alert("请输入数字！");
+                }
+            },
+            headerStyle({row,column,rowIndex,columnIndex}){
+                //console.log('row:',row,'column:', column, 'rowIndex:',rowIndex, 'columnIndex:',columnIndex );
+                if(rowIndex === 2||3){ 
+                // return {display:"none"};
+                return{height:'0',padding:'2px',fontSize:'7px',background:'#6E8B3D',color:'#FFFFFF',}
+                }
+                if(rowIndex === 0){
+                return{height:'0',padding:'2px',fontSize:'7px',background:'#6E8B3D',color:'#FFFFFF',}
+                }
+                if(rowIndex==1 ){
+                    // return {background:'#eee',color:'#606266'};
+                    return{height:'0',padding:'1px',fontSize:'5px',background:'#6E8B3D',color:'#FFFFFF'};
+                };
+            },
+
+            handleClose(done) {
+                var inputs = document.getElementsByClassName("secondFieldDetail");
+                if(inputs.length < this.secondList.length){
+                    this.$confirm('还未录入完成，确认退出？')
+                        .then(_ => {
+                            //不保存当前数据
+                            // this.clearAllInputs();
+                            done();
+                        })
+                        .catch(_ => {});
+                }
+                else if(inputs.length == this.secondList.length){
+                    this.$confirm('录入数据是否保存？')
+                        .then(_ => {
+                            //保存当前数据
+                            this.dataList = [];
+                            var tem = "";
+                            tem += this.fieldRowIndex+"_"+this.fieldColIndex;
+                            localStorage.setItem(tem,this.dataList);
+                            // this.clearAllInputs();
+                            done();
+                        })
+                        .catch(_ => {});
+                }else{
+                    this.$confirm('确认关闭？')
+                        .then(_ => {
+                            //不保存当前数据
+                            // this.clearAllInputs();
+                            done();
+                        })
+                        .catch(_ => {});
+                }
+
+            },
+
+            
+
+        //修改数据退还部分状态
+      fixDataBackState(tableName,id){
+        axios({
+          url:'/fixDataBackState',
+          method:'post',
+          params:{
+            tableName:tableName,
+            tableId:id
+          }
+        }).then(
+
+        ).catch(
+          _=>{
+            return this.$message.error("数据修改失败！");
+          }
+        );
+      }, 
+            //保存
+            getFormList(flag){
+                        this.$confirm("是否上报？").then(_=>{
+                var date = this.getNowTime();
+                this.data.modification_time = date;
+                for(var i = 0 ;i < this.data.length ; ++i){
+                    this.data[i].modification_time = date;
+                }
+                this.data.in_use = flag;
+
+                var str = JSON.stringify(this.data)
+                this.saveInputData(str);
+                if(this.column_id != '' && this.tableName != ''){
+              this.fixDataBackState(this.tableName,this.column_id);
+          }  
+        }).catch(_=>{
+          return this.$message.info("您取消了操作！");
+        });
+
+            },
+
+            //生成保存函数
+            saveInputData(str){
+                axios({
+                    url:'/getInputDataTable0703',
+                    method:'post',
+                    params:{
+                        data:str
+                    }
+                }).then(res=>{
+                    // //console.log(res);
+                    this.$message.success("操作成功！");
+                }).catch(err=>{
+                    return this.$message.error("数据保存失败！");
+                })
+
+            },
+
+            //填写详细信息
+            fillDetailInfo(e){
+                var temData = localStorage.getItem('1_4');
+                var Index = e.target.parentNode.cellIndex;
+                this.fieldColIndex = Index;//把当前点击的字段所在列保存
+                this.fieldRowIndex = e.target.parentNode.parentNode.rowIndex;//把当前点击字段所在行保存
+                this.fieldRowIndex = this.fieldRowIndex-2;
+                //console.log(this.fieldRowIndex);
+                var getTdInnerHTML="";
+                getTdInnerHTML = e.target.parentNode.parentNode.parentNode.rows[1].childNodes[Index].innerHTML;
+                this.tableFlag = getTdInnerHTML;
+
+                // this.secondChooseField(getTdInnerHTML);
+                this.secondList = [];
+                for(var i = 0 ; i < this.headerList.length ; ++i){
+                    if(this.headerList[i].column_name == getTdInnerHTML){
+                        this.secondList = this.headerList[i].children;
+                    }
+                }
+                this.tdSecondWidth = 100/this.secondHeaderList.length;
+                this.tdSecondFieldWidth = 100/this.secondList.length;
+                this.detialDialogVisible = true;
+            },
+
+            // 获取当前时间
+            getNowTime: function () {
+                let dateTime
+                let yy = new Date().getFullYear()
+                let mm = new Date().getMonth() + 1 < 10 ? '0'+ (new Date().getMonth() + 1) :new Date().getMonth() + 1
+                let dd = new Date().getDate() < 10 ? '0'+ new Date().getDate():new Date().getDate()
+                let hh = new Date().getHours()  < 10 ? '0'+ new Date().getHours() :new Date().getHours()
+                let mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes():new Date().getMinutes()
+                let ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds():new Date().getSeconds()
+                // if(hh < 10){
+                //     dateTime = yy + '-' + mm + '-' + dd + ' ' + '0' + hh + ':' + mf + ':' + ss
+                // }else{
+                    dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
+                // }
+                return dateTime
+            },
+
+        },
+        created(){
+            this.initData();
+            var people = localStorage.getItem('ms_username');
+            //console.log(people)
+            if(this.$route.query.column_id != null && this.$route.query.column_id != undefined && this.$route.query.column_id != ''){
+                this.column_id = this.$route.query.column_id;
+                this.tableName = this.$route.query.record_table;
+            }
+            this.getTableData(people,this.column_id);
+
+        },
+    }
+</script>
+<!-- <script>Vue.config.productionTip=false</script> -->
+<style>
+    .demo-image__placeholder{
+
+    }
+    .el-dialog{
+        top: 15%;
+        left: 4%;
+    }
+    table tr, table tr td { border:1px solid lightgray; }
+</style>

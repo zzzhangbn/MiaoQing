@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ricemonitoring.mapper.WeatherMapper">
+    <!-- 获取所有天气数据 -->
+    <select id="getWeatherData" resultType="com.ricemonitoring.pojo.weatherinformation">
+            select * from weatherinformation GROUP BY dates DESC
+        </select>
+    <!-- 下拉框选择 -->
+    <select id="getselect" resultType="com.ricemonitoring.pojo.weatheroption">
+            select * from weatheroption
+        </select>
+    <!-- 下拉框选择 -->
+    <select id="getselects" resultType="weatheroption">
+            select * from weatheroption
+        </select>
+    <!-- 查询 -->
+    <select id="getsearch" resultType="weatherinformation">
+        select * from weatherinformation
+        <where>
+            <if test="cityType != null and cityType != '' ">
+                and citys = #{cityType}
+            </if>
+            <if test="yearType != null and yearType != '' ">
+                and years = #{yearType}
+            </if>
+            <if test="monthType != null and monthType != '' ">
+                and months = #{monthType}
+            </if>
+        </where>
+        GROUP BY dates ASC
+    </select>
+    <!-- 按日期范围查询 -->
+    <select id="datesearch" resultType="weatherinformation">
+        select * from weatherinformation where #{daterange2}>= dates and dates >=#{daterange1}
+
+        <if test="cityTypes != null and cityTypes != '' ">
+            and citys = #{cityTypes}
+        </if>
+        GROUP BY dates ASC
+    </select>
+
+    <!-- echart1 -->
+    <select id="echart1" parameterType="String" resultType="weatherinformation">
+        select realtime_temperature,highest_temperature,minimum_temperature from weatherinformation
+        <where>
+            <if test="cityType != null and cityType != '' ">
+                and citys = #{cityType}
+            </if>
+            <if test="yearType != null and yearType != '' ">
+                and years = #{yearType}
+            </if>
+            <if test="monthType != null and monthType != '' ">
+                and months = #{monthType}
+            </if>
+        </where>
+    </select>
+
+    <!-- echart2 -->
+    <select id="echart2" parameterType="String" resultType="weatherinformation">
+        select sunlight_time,precipitations from weatherinformation
+        <where>
+            <if test="cityType != null and cityType != '' ">
+                and citys = #{cityType}
+            </if>
+            <if test="yearType != null and yearType != '' ">
+                and years = #{yearType}
+            </if>
+            <if test="monthType != null and monthType != '' ">
+                and months = #{monthType}
+            </if>
+        </where>
+    </select>
+
+    <!-- echart3的所选日期的当年数据 -->
+    <select id="echart3_one" resultType="weatherinformation">
+        select realtime_temperature,precipitations,sunlight_time,humidity,pm from weatherinformation where #{daterange2}>= dates and dates >=#{daterange1}
+
+        <if test="cityTypes != null and cityTypes != '' ">
+            and citys = #{cityTypes}
+        </if>
+    </select>
+
+    <!-- echart3的所选日期年份的前一年数据 -->
+    <select id="echart3_two" resultType="weatherinformation">
+        select realtime_temperature,precipitations,sunlight_time,humidity,pm from weatherinformation where #{daterange4}>= dates and dates >=#{daterange3}
+
+        <if test="cityTypes != null and cityTypes != '' ">
+            and citys = #{cityTypes}
+        </if>
+    </select>
+
+    <!-- echart3的所选日期年份的上上一年数据 -->
+    <select id="echart3_three" resultType="weatherinformation">
+        select realtime_temperature,precipitations,sunlight_time,humidity,pm from weatherinformation where #{daterange6}>= dates and dates >=#{daterange5}
+
+        <if test="cityTypes != null and cityTypes != '' ">
+            and citys = #{cityTypes}
+        </if>
+    </select>
+
+    <!-- echart5的所选日期的全省层面 -->
+    <select id="echart5_quanshengjiwen" resultType="weatherinformation">
+        select realtime_temperature from weatherinformation
+WHERE dates BETWEEN #{daterange1} AND #{daterange2}
+    </select>
+    <select id="echart5_jianghuaijiwen" resultType="weatherinformation">
+        select citys,dates,realtime_temperature from weatherinformation
+WHERE (citys='寿县' OR citys='凤台县' OR citys='明光市' OR citys='定远县' OR citys='来安县' OR 		   citys='天长市' OR citys='全椒县' OR citys='舒城县' OR citys='裕安区' OR citys='霍山县' OR
+			 citys='霍邱县' OR citys='庐江县' OR citys='巢湖市' OR citys='肥东县' OR citys='肥西县' OR
+			  citys='桐城市' OR citys='宿松县' OR citys='怀宁县' OR citys='望江县' OR citys='太湖县')
+AND
+dates BETWEEN #{daterange1} AND #{daterange2}
+    </select>
+    <select id="echart5_yanjiangjiwen" resultType="weatherinformation">
+        select citys,dates,realtime_temperature from weatherinformation
+WHERE (citys='桐城市' OR citys='宿松县' OR citys='怀宁县' OR citys='望江县' OR citys='太湖县' OR 		   citys='东至县' OR citys='贵池区' OR citys='义安区' OR citys='枞阳县' OR citys='湾沚区' OR
+			 citys='南陵县' OR citys='无为市' OR citys='当涂县')
+AND
+dates BETWEEN #{daterange1} AND #{daterange2}
+    </select>
+    <select id="echart5_yanhuaijiwen" resultType="weatherinformation">
+        select citys,dates,realtime_temperature from weatherinformation
+WHERE (citys='颍上县' OR citys='舒城县' OR citys='裕安区' OR citys='霍山县' OR citys='霍邱县' OR 		   citys='寿县' OR citys='凤台县' OR citys='明光市' OR citys='定远县' OR citys='来安县' OR
+			 citys='天长市' OR citys='全椒县' OR citys='怀远县' OR citys='五河县')
+AND
+dates BETWEEN #{daterange1} AND #{daterange2}
+    </select>
+
+
+</mapper>

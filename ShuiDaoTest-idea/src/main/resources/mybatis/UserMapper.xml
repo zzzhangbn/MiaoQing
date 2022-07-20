@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ricemonitoring.mapper.UserMapper">
+    <!--用户注册功能-->
+    <insert id="register" parameterType="person_register">
+        insert into person_register(name,password,phone,crop,access,apply_date,audit)
+        values (#{name},#{password},#{phone},#{crop},#{access},#{apply_date},#{audit})
+    </insert>
+
+    <!--判断账户是否存在-->
+    <select id="isExist" parameterType="person_login" resultType="person_login">
+        select account,access from person_login where account = #{account}
+    </select>
+    <!--用户登录功能-->
+    <select id="login" parameterType="person_login" resultType="person_login">
+        select account,access,area,crop,in_use from person_login where account=#{account} and password = #{password} and in_use = 1
+    </select>
+    <!--查出所有的待审核人员信息-->
+    <select id="getAllPerson" resultType="person_register">
+        select id,name,password,phone,crop,access,apply_date,audit from person_register where access != '0'
+    </select>
+
+    <!--审核状态的改变-->
+    <update id="changeAudit" parameterType="person_register">
+        update person_register set audit = #{audit} where id = #{id}
+    </update>
+    <!--人员信息添加到人员信息表-->
+    <insert id="addToPerson_people" parameterType="person_people">
+        insert into person_people(account,name,phone,crop,sub_crop,area,access,use_date,in_use)
+        values(#{account},#{name},#{phone},#{crop},#{sub_crop},#{area},#{access},#{use_date},#{in_use})
+    </insert>
+    <!--人员信息添加到人员登录表-->
+    <insert id="addToPerson_login" parameterType="person_login">
+        insert into person_login(account,password,access,crop,sub_crop,area,in_use)
+        values(#{account},#{password},#{access},#{crop},#{sub_crop},#{area},#{in_use})
+    </insert>
+    <!--    判断某个地区的账号是否存在-->
+    <select id="AccountExist" resultType="person_login">
+        select account,area,crop from person_login where area = #{area} and crop = #{crop}
+    </select>
+
+
+
+    <!--根据cropId查询二级作物分类-->
+    <select id="getSubCropList" resultType="sys_code" parameterType="String">
+        select * from sys_code where kind = #{cropId}
+    </select>
+
+    <!--    通过作物类型获取所有的苗情监测员账号-->
+    <select id="getAccount" resultType="person_people" parameterType="String">
+        select account,name,phone,crop,sub_crop,use_date,sys_code.`code_name` as area FROM person_people,sys_code where
+        person_people.`area` = sys_code.`code`  AND kind = 'area' and access = '2' and in_use = '1' and crop = #{crop}
+    </select>
+
+    <!--账户弃用-人员信息表    -->
+    <update id="accountDeprecation1" parameterType="String">
+        update person_people set in_use = 0 where account = #{account}
+    </update>
+    <!--账户弃用-登录表    -->
+    <update id="accountDeprecation2" parameterType="String">
+        update person_login set in_use = 0 where account = #{account}
+    </update>
+
+    <!--根据code_name查出code    -->
+    <select id="getCode" resultType="String" parameterType="String">
+        select code from sys_code where code_name = #{codeName}
+    </select>
+    <!--根据县名查出县内监测点的数量-->
+    <select id="getMonitoringPointNum" parameterType="String" resultType="int">
+        select count(code) from monitoring_point where  area = #{area}
+    </select>
+<!--    将监测点数据插入监测点表格中-->
+    <insert id="addMonitoringPoint" parameterType="monitoring_point">
+        insert into monitoring_point(code,province,city,area,areaCate,crop,in_use) values (#{code},#{province},#{city},#{area},#{areaCate},#{crop},#{in_use})
+    </insert>
+    <!--新增监测点在带有监测田块的数据表中产生记录-->
+    <insert id="generateRecord">
+        insert into ${tableId}(field_1,field_2,in_use) values (#{area},#{code},0)
+    </insert>
+
+
+    <!--通过作物类型获取监测点信息    -->
+    <select id="getMonitoringPoint" parameterType="String" resultType="monitoring_point">
+        select monitoring_point.`code`,province,city,area,sys_code.`code_name` as crop from monitoring_point,sys_code where monitoring_point.`crop` = sys_code.`code` and crop = #{crop}
+    </select>
+
+    <select id="getAreaCodeByArea" parameterType="String" resultType="sum_select_list">
+        select area_code,rice_type from sum_select_list where caption = '县（市、区）' and in_use = '1'
+                and list = #{area}
+    </select>
+
+    <select id="getAllAreaCode"  resultType="sum_select_list">
+        select * from sum_select_list where caption = '县（市、区）' and in_use = '1'
+    </select>
+
+<!--    用户密码修改-->
+    <update id="updatePwd" parameterType="person_login">
+        update person_login set password = #{newPassword} where account = #{account}
+    </update>
+
+
+
+
+</mapper>

@@ -1,0 +1,40 @@
+#数据库连接参数
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/miaoqing?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+#    url: jdbc:mysql://139.196.208.205:3306/seedlings_monitoring?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    username: root
+    password: 991012zz
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 1000MB
+#mybatis配置文件
+mybatis:
+  #指定对象类型所在地址
+  type-aliases-package: com.ricemonitoring.pojo
+  mapper-locations: classpath:mybatis/*.xml
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#logging:
+#  level:
+#    com.ricemonitoring.mapper: debug
+
+
+ftp-centos:
+  host: 139.196.208.205
+  port: 22
+  user: root
+  password: Cclsol123
+  basePath: /mnt/project/images
+
+
+#端口号
+#server:
+#  port: 8889
+
+#测试端口号
+server:
+  port: 8899
+
