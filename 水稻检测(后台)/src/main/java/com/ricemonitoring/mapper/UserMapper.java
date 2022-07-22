@@ -25,6 +25,12 @@ public interface UserMapper {
     person_login isExist(person_login person);
     //2.查看账户密码是否正确
     person_login login(person_login person);
+    // 查看账号登录失败次数
+    person_login getFault(person_login person);
+    // 账号失败次数清零
+    void faultEmpty(person_login person);
+    // 账号失败次数加
+    void faultAdd(person_login person);
 
     //查出所有的人员信息
     List<person_register> getAllPerson();
@@ -62,5 +68,8 @@ public interface UserMapper {
     List<person_login>  AccountExist(@Param("area") String area, @Param("crop") String crop);
 
     void updatePwd(person_login person);
+
+
 }
+
 

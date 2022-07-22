@@ -21,4 +21,5 @@ public class person_login {
     private String area;
     private String sub_crop;
     private int in_use;
+    private int fault;
 }

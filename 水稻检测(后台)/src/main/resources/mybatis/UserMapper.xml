@@ -13,6 +13,10 @@
     <select id="isExist" parameterType="person_login" resultType="person_login">
         select account,access from person_login where account = #{account}
     </select>
+    <!--判断登录失败次数-->
+    <select id="getFault" parameterType="person_login" resultType="person_login">
+        select account,access, fault from person_login where account = #{account} and fault != 10
+    </select>
     <!--用户登录功能-->
     <select id="login" parameterType="person_login" resultType="person_login">
         select account,access,area,crop,in_use from person_login where account=#{account} and password = #{password} and in_use = 1
@@ -81,6 +85,7 @@
     </insert>
 
 
+
     <!--通过作物类型获取监测点信息    -->
     <select id="getMonitoringPoint" parameterType="String" resultType="monitoring_point">
         select monitoring_point.`code`,province,city,area,sys_code.`code_name` as crop from monitoring_point,sys_code where monitoring_point.`crop` = sys_code.`code` and crop = #{crop}
@@ -99,8 +104,14 @@
     <update id="updatePwd" parameterType="person_login">
         update person_login set password = #{newPassword} where account = #{account}
     </update>
-
-
+    <!--账号失败次数清空-->
+    <update id="faultEmpty" parameterType="person_login">
+        update person_login set fault = 0 where account = #{account}
+    </update>
+    <!--账号失败次数查询-->
+    <update id="faultAdd" parameterType="person_login">
+        update person_login set fault = fault + 1 where account = #{account}
+    </update>
 
 
 </mapper>

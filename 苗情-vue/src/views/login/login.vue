@@ -9,18 +9,18 @@
     <div class="main">
       <el-dialog :visible.sync="dialogFormVisible" width="500px">
         <p style="width:100%;font-size:20px;text-align: center;margin:0 0 20px 0;">用户登录</p>
-        <el-form :model="loginForm" :rules="rules" label-width="100px" class="demo-ruleForm" label-position="left">
+        <el-form :model="loginForm" :rules="rules" label-width="90px" class="demo-ruleForm" label-position="left">
             <el-form-item prop="account" label="用户账号">
-                <el-input v-model="loginForm.account" placeholder="请输入账户" width="150"></el-input>
+                <el-input v-model="loginForm.account" placeholder="请输入账户" width="150" @blur="addItem()"></el-input>
             </el-form-item>
             <el-form-item prop="password" label="账号密码">
                 <el-input :type="flagType" placeholder="请输入密码" width="150" v-model="loginForm.password" autocomplete="off" @keyup.enter.native="submitForm('ruleForm')">
                   <i slot="suffix" :class="[this.flag?'el-icon-circle-check':'el-icon-circle-close']" @click="getFlag()" />
                 </el-input>
             </el-form-item>
-            <el-form-item prop="ValidCode" label="验证码">
+            <el-form-item v-if="isshow==true" prop="ValidCode" label="验证码" >
                 <div style="display: flex">
-                  <el-input v-model="loginForm.ValidCode" style="width: 150;" placeholder="请输入验证码" ></el-input>
+                  <el-input v-model="loginForm.ValidCode" width="150" placeholder="请输入验证码" ></el-input>
                   <ValidCode @input="createValidCode" />
                 </div>
             </el-form-item>
@@ -85,6 +85,7 @@ export default {
   },
   data() {
     return {
+      isshow: false,
       flag: false,
       flagType:'password',
       dialogFormVisible:false,
@@ -111,6 +112,13 @@ export default {
     };
   },
   methods: {
+    addItem(){
+      if (Number(this.getCookie(this.loginForm.account)) >= 3 ){
+        this.isshow=true;
+      } else {
+        this.isshow=false;
+      }
+    },
     //选择类别跳转到登录页面
     async moveToLogin(msg) {
       //将用户选择的类别存到vuex中
@@ -141,13 +149,15 @@ export default {
             this.$message('你输入的账号格式不对，请重新输入！');
             return;
         }
-        if (!this.loginForm.ValidCode) {
+        if (this.isshow==true){
+          if (!this.loginForm.ValidCode) {
             this.$message.error("请填写验证码");
             return;
-        }
-        if(this.loginForm.ValidCode.toLowerCase() !== this.validCode.toLowerCase()) {
+          }
+          if(this.loginForm.ValidCode.toLowerCase() !== this.validCode.toLowerCase()) {
             this.$message.error("验证码错误");
             return;
+          }
         }
         //将用户数据存到缓存里
         localStorage.setItem('ms_username',this.loginForm.account);
@@ -163,14 +173,23 @@ export default {
                     this.$message({message:"你输入的账户不存在，请重新输入",type:'error'});
                     break;
                 case 500:
-                    //账户存在，但密码错误
+                    //账户存在，但密码错误,且累计错误小于3次
                     this.$message({message:"你输入的账户或密码错误，请重新输入",type:'error'});
+                    this.setCookie(this.loginForm.account, Number(this.getCookie(this.loginForm.account)) + 1, 1);
+                    if (Number(this.getCookie(this.loginForm.account)) == 3 ){
+                        this.isshow=true;
+                    } 
+                    break;
+                case 501:
+                    //账户存在，但密码错误,且累计错误大于3次
+                    this.$message({message:"账号错误次数过多，已封号。请联系管理员解封",type:'error'});
                     break;
                 case 200:
                     // 账户密码正确；判断用户的类别
                     //判断用户的作物类别是否和选择的匹配
                     //获取到存在vuex中的作物类别
                     //获取用户真实的作物类别,两者进行匹配，如果匹配得到返回index，匹配不到则返回-1
+                    this.setCookie(this.loginForm.account, 0, 1);
                     localStorage.setItem('crop',res.data.person.crop);
                     localStorage.setItem('area',res.data.person.area);
                     sessionStorage.setItem("ms_username",res.data.person.account);
