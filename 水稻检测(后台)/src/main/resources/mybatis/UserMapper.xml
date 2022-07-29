@@ -25,9 +25,8 @@
     <select id="getAllPerson" resultType="person_register">
         select id,name,password,phone,crop,access,apply_date,audit from person_register where access != '0'
     </select>
-
     <!--审核状态的改变-->
-    <update id="changeAudit" parameterType="person_register">
+    <update id="changeAudit">
         update person_register set audit = #{audit} where id = #{id}
     </update>
     <!--人员信息添加到人员信息表-->
@@ -83,9 +82,9 @@
     <insert id="generateRecord">
         insert into ${tableId}(field_1,field_2,in_use) values (#{area},#{code},0)
     </insert>
-
-
-
+    <insert id="addToLogin_record" parameterType="login_record">
+        insert into login_record(account,logintime,loginip,status,password,fault) values (#{account},#{logintime},#{loginip},#{status},#{password},#{fault})
+    </insert>
     <!--通过作物类型获取监测点信息    -->
     <select id="getMonitoringPoint" parameterType="String" resultType="monitoring_point">
         select monitoring_point.`code`,province,city,area,sys_code.`code_name` as crop from monitoring_point,sys_code where monitoring_point.`crop` = sys_code.`code` and crop = #{crop}
@@ -99,8 +98,11 @@
     <select id="getAllAreaCode"  resultType="sum_select_list">
         select * from sum_select_list where caption = '县（市、区）' and in_use = '1'
     </select>
-
-<!--    用户密码修改-->
+    <!--查询账号错误次数-->
+    <select id="faultNumber" resultType="java.lang.Integer">
+        select fault from person_login where account=#{account}
+    </select>
+    <!-- 用户密码修改-->
     <update id="updatePwd" parameterType="person_login">
         update person_login set password = #{newPassword} where account = #{account}
     </update>

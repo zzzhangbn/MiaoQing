@@ -31,6 +31,10 @@ public interface UserMapper {
     void faultEmpty(person_login person);
     // 账号失败次数加
     void faultAdd(person_login person);
+    // 查询账号错误次数
+    int faultNumber(person_login person);
+    // 将登录信息添加到登录日志表
+    void addToLogin_record(login_record person);
 
     //查出所有的人员信息
     List<person_register> getAllPerson();

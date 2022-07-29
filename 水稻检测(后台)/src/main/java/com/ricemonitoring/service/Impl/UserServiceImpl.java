@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,35 +65,55 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Map<String,Object> login(person_login person) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         //判断用户账号是否存在
         person_login person_login = userMapper.isExist(person);
         person_login fault = userMapper.getFault(person);
-        if (person_login==null){
+        login_record record = new login_record();
+        record.setAccount(person.getAccount());
+        record.setPassword(MD5Utils.inputPassToFormPass(person.getPassword()));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String logintime = formatter.format(new Date());
+        record.setLogintime(logintime);
+        InetAddress addr;
+        try {
+            addr = InetAddress.getLocalHost();
+
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+        String loginip = addr.getHostAddress();
+        record.setLoginip(loginip);
+        if (person_login == null) {
             //账户不存在
-            map.put("token",404);
-            map.put("msg","你输入的账户不存在，请重新输入！");
+            map.put("token", 404);
+            map.put("msg", "你输入的账户不存在，请重新输入！");
             return map;
-        }else if (fault != null){
+        } else if (fault != null) {
             //账户存在
             person.setPassword(MD5Utils.inputPassToFormPass(person.getPassword()));
-            person_login person1 = userMapper.login(person);
-            if (person1!=null){
+            person_login isAccountTure = userMapper.login(person);
+            if (isAccountTure != null) {
                 //账户密码正确
-                map.put("token",200);
-                map.put("person",person1);
-                map.put("msg","登录成功");
+                map.put("token", 200);
+                map.put("person", isAccountTure);
+                map.put("msg", "登录成功");
+                record.setStatus(1);
                 userMapper.faultEmpty(person);
-            }else {
-                    //账户密码不正确次数小于10
-                    map.put("token",500);
-                    map.put("msg","你输入的账户密码错误，请重新输入");
-                    userMapper.faultAdd(person);
+            } else {
+                //账户密码不正确次数小于10
+                map.put("token", 500);
+                map.put("msg", "你输入的账户密码错误，请重新输入");
+                record.setStatus(0);
+                userMapper.faultAdd(person);
             }
+            int faultNumber = userMapper.faultNumber(person);
+            record.setFault(faultNumber);
+            userMapper.addToLogin_record(record);
             return map;
-        }else {
-            map.put("token",501);
-            map.put("msg","账号错误次数过多，已封号。请联系管理员解封");
+        } else {
+            map.put("token", 501);
+            map.put("msg", "账号错误次数过多，已封号。请联系管理员解封");
             return map;
         }
     }
