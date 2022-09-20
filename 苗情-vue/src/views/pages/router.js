@@ -39,6 +39,21 @@ export default [
                 component:resolve => require(['./researchReport/researchReport.vue'], resolve),
                 meta: { requiresAuth: true,title:'1' }
             },
+            {
+                path:'/userReport',
+                component:resolve => require(['./researchReport/userReport.vue'], resolve),
+                meta: { requiresAuth: true,title:'1' }
+            },
+            {
+                path:'/userData',
+                component:resolve => require(['./userData/userData.vue'],resolve),
+                meta: {requiresAuth: true,title:'1'}
+            },
+            {
+                path:'/accountChange',
+                component:resolve => require(['./userData/accountChange.vue'],resolve),
+                meta: {requiresAuth: true,title:'1'}
+            },
 	        {
                 path:'/weathershow',
                 component:resolve => require(['./weathershow/weathershow.vue'], resolve),
@@ -259,5 +274,5 @@ export default [
     {
         path:'/test',
         component:resolve => require(['./test.vue'], resolve),
-    }
+    },
 ]

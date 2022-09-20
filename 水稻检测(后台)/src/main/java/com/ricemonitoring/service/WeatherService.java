@@ -29,4 +29,6 @@ public interface WeatherService {
     List<weatherinformation> echart3_all(String daterange1, String daterange2, String cityTypes, String daterange3, String daterange4, String daterange5, String daterange6);
     //echart5积温
     Map<String,Integer> echart5_jiwensearch(String daterange1, String daterange2);
+    //增加天气信息
+    Map<String,Object> weatherAdd(weatherinformation weatherAdd);
 }

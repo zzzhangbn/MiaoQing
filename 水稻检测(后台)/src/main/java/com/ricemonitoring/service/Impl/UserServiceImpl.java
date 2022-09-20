@@ -1,8 +1,11 @@
 package com.ricemonitoring.service.Impl;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.ricemonitoring.mapper.UserMapper;
 import com.ricemonitoring.pojo.*;
 import com.ricemonitoring.service.UserService;
+import com.ricemonitoring.util.AddressUtils;
 import com.ricemonitoring.util.MD5Utils;
 import com.ricemonitoring.util.email;
 import org.springframework.beans.BeanUtils;
@@ -10,14 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 /**
@@ -32,6 +29,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     email email;
+
+    @Autowired
+    AddressUtils addressUtils;
     /*
     用户注册功能
     param:
@@ -71,19 +71,15 @@ public class UserServiceImpl implements UserService {
         person_login fault = userMapper.getFault(person);
         login_record record = new login_record();
         record.setAccount(person.getAccount());
-        record.setPassword(MD5Utils.inputPassToFormPass(person.getPassword()));
+        record.setPassword(person.getPassword());
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String logintime = formatter.format(new Date());
         record.setLogintime(logintime);
-        InetAddress addr;
-        try {
-            addr = InetAddress.getLocalHost();
+        String cip = person.getCip();
+        record.setLoginip(cip);
 
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
-        String loginip = addr.getHostAddress();
-        record.setLoginip(loginip);
+        String ipInfo = addressUtils.getAddressByIP(cip);
+        record.setLoginname(ipInfo);
         if (person_login == null) {
             //账户不存在
             map.put("token", 404);
@@ -107,8 +103,6 @@ public class UserServiceImpl implements UserService {
                 record.setStatus(0);
                 userMapper.faultAdd(person);
             }
-            int faultNumber = userMapper.faultNumber(person);
-            record.setFault(faultNumber);
             userMapper.addToLogin_record(record);
             return map;
         } else {
@@ -117,6 +111,66 @@ public class UserServiceImpl implements UserService {
             return map;
         }
     }
+
+    @Override
+    public Map<String, Object> phonelogin(String phone) {
+        HashMap<String, Object> map = new HashMap<>();
+        person_people people = new person_people();
+        people.setPhone(phone);
+        person_people isFind = userMapper.findPhone(people);
+        if (isFind != null)
+        {
+            String sources = "0123456789"; // 加上一些字母，就可以生成pc站的验证码了
+            Random rand = new Random();
+            StringBuilder flag = new StringBuilder();
+            for (int j = 0; j < 6; j++)
+            {
+                flag.append(sources.charAt(rand.nextInt(9)));
+            }
+            String flags = flag.toString();
+            String code = MD5Utils.inputPassToFormPass(flags);
+            phone_login phoneLogin = new phone_login();
+            phoneLogin.setPhone(phone);
+            phoneLogin.setCode(code);
+            userMapper.setPhoneCode(phoneLogin);
+            String url = "https://utf8api.smschinese.cn/?Uid=zzhang&Key=TEST1234&smsMob=" + phone + "&smsText=【验证码】" + flags;
+            HttpResponse res = HttpRequest.get(url).execute();
+            map.put("token",500);
+            map.put("msg", "发送成功");
+        }else {
+            map.put("token", 404);
+            map.put("msg", "你输入的手机号不存在，请重新输入！");
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> Loginp(phone_login pLogin) {
+        HashMap<String, Object> map = new HashMap<>();
+        String code = pLogin.getCode();
+        String flag = MD5Utils.inputPassToFormPass(code);
+        pLogin.setCode(flag);
+        phone_login phonelogin = userMapper.phoneLogin(pLogin);
+        if (phonelogin != null){
+            person_people find = new person_people();
+            find.setPhone(pLogin.getPhone());
+            person_people people = userMapper.findPhone(find);
+            person_login person = new person_login();
+            person.setAccount(people.getAccount());
+            person_login isAccountTure = userMapper.login2(person);
+            //登录成功之后验证码清空
+            phone_login phoneLogin = new phone_login();
+            userMapper.deletePhoneCode(pLogin.getPhone());
+            map.put("token", 200);
+            map.put("person", isAccountTure);
+            map.put("msg", "登录成功");
+        } else {
+            map.put("token", 404);
+            map.put("msg", "验证码错误");
+        }
+        return map;
+    }
+
     /*
     查出所有的人员信息
      */

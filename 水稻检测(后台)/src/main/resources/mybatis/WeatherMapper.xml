@@ -3,9 +3,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ricemonitoring.mapper.WeatherMapper">
+    <!--增加天气信息-->
+    <insert id="weatherAdd" parameterType="weatherinformation">
+        replace into weatherinformation (citys,dates,weathers,realtime_temperature,highest_temperature,minimum_temperature,humidity,wind_direction,ultraviolet_rays,air_quality,pm,sunlight_time,precipitations,years,months)
+        values(#{citys},#{dates},#{weathers},#{realtime_temperature},#{highest_temperature},#{minimum_temperature},#{humidity},#{wind_direction},#{ultraviolet_rays},#{air_quality},#{pm},#{sunlight_time},#{precipitations},#{years},#{months})
+    </insert>
     <!-- 获取所有天气数据 -->
     <select id="getWeatherData" resultType="com.ricemonitoring.pojo.weatherinformation">
-            select * from weatherinformation GROUP BY dates DESC
+            select * from weatherinformation ORDER BY dates DESC
         </select>
     <!-- 下拉框选择 -->
     <select id="getselect" resultType="com.ricemonitoring.pojo.weatheroption">
@@ -29,7 +34,7 @@
                 and months = #{monthType}
             </if>
         </where>
-        GROUP BY dates ASC
+        order by dates ASC
     </select>
     <!-- 按日期范围查询 -->
     <select id="datesearch" resultType="weatherinformation">
@@ -38,7 +43,7 @@
         <if test="cityTypes != null and cityTypes != '' ">
             and citys = #{cityTypes}
         </if>
-        GROUP BY dates ASC
+        order by dates ASC
     </select>
 
     <!-- echart1 -->

@@ -1,0 +1,75 @@
+2022-07-26 12:09:42.376 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Starting RiceMonitoringApplication using Java 1.8.0_333 on LAPTOP-KCU9A8NP with PID 7972 (E:\JavaSoftware\苗情\水稻检测(后台)\target\classes started by zhang in E:\JavaSoftware\苗情\水稻检测(后台))
+2022-07-26 12:09:42.386 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - No active profile set, falling back to default profiles: default
+2022-07-26 12:09:43.336 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8899 (http)
+2022-07-26 12:09:43.346 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:09:43.346 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2022-07-26 12:09:43.346 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.46]
+2022-07-26 12:09:43.426 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2022-07-26 12:09:43.426 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1000 ms
+2022-07-26 12:09:45.016 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:09:45.036 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8899 (http) with context path ''
+2022-07-26 12:09:45.046 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Started RiceMonitoringApplication in 3.086 seconds (JVM running for 4.636)
+2022-07-26 12:09:45.046 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state LivenessState changed to CORRECT
+2022-07-26 12:09:45.046 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
+2022-07-26 12:23:20.723 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Starting RiceMonitoringApplication using Java 1.8.0_333 on LAPTOP-KCU9A8NP with PID 13108 (E:\JavaSoftware\苗情\水稻检测(后台)\target\classes started by zhang in E:\JavaSoftware\苗情\水稻检测(后台))
+2022-07-26 12:23:20.726 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - No active profile set, falling back to default profiles: default
+2022-07-26 12:23:24.637 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8899 (http)
+2022-07-26 12:23:24.660 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:23:24.661 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2022-07-26 12:23:24.661 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.46]
+2022-07-26 12:23:24.871 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2022-07-26 12:23:24.871 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3973 ms
+2022-07-26 12:23:27.037 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:23:27.069 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8899 (http) with context path ''
+2022-07-26 12:23:27.106 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Started RiceMonitoringApplication in 7.391 seconds (JVM running for 12.183)
+2022-07-26 12:23:27.107 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state LivenessState changed to CORRECT
+2022-07-26 12:23:27.110 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
+2022-07-26 12:24:09.367 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Starting RiceMonitoringApplication using Java 1.8.0_333 on LAPTOP-KCU9A8NP with PID 15364 (E:\JavaSoftware\苗情\水稻检测(后台)\target\classes started by zhang in E:\JavaSoftware\苗情\水稻检测(后台))
+2022-07-26 12:24:09.381 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - No active profile set, falling back to default profiles: default
+2022-07-26 12:24:12.354 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8899 (http)
+2022-07-26 12:24:12.366 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:24:12.367 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2022-07-26 12:24:12.367 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.46]
+2022-07-26 12:24:12.585 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2022-07-26 12:24:12.585 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2936 ms
+2022-07-26 12:24:14.465 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:24:14.494 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8899 (http) with context path ''
+2022-07-26 12:24:14.503 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Started RiceMonitoringApplication in 5.976 seconds (JVM running for 11.15)
+2022-07-26 12:24:14.504 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state LivenessState changed to CORRECT
+2022-07-26 12:24:14.506 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
+2022-07-26 12:24:31.635 [http-nio-8899-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-07-26 12:24:31.636 [http-nio-8899-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2022-07-26 12:24:31.638 [http-nio-8899-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2022-07-26 12:24:32.065 [http-nio-8899-exec-2] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2022-07-26 12:24:32.096 [http-nio-8899-exec-2] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2022-07-26 12:28:15.996 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Starting RiceMonitoringApplication using Java 1.8.0_333 on LAPTOP-KCU9A8NP with PID 11140 (E:\JavaSoftware\苗情\水稻检测(后台)\target\classes started by zhang in E:\JavaSoftware\苗情\水稻检测(后台))
+2022-07-26 12:28:16.132 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - No active profile set, falling back to default profiles: default
+2022-07-26 12:28:18.626 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8899 (http)
+2022-07-26 12:28:18.779 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:28:18.881 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2022-07-26 12:28:18.931 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.46]
+2022-07-26 12:28:19.300 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2022-07-26 12:28:19.347 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2958 ms
+2022-07-26 12:28:21.145 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:28:21.225 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8899 (http) with context path ''
+2022-07-26 12:28:21.341 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Started RiceMonitoringApplication in 5.931 seconds (JVM running for 8.912)
+2022-07-26 12:28:21.409 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state LivenessState changed to CORRECT
+2022-07-26 12:28:21.465 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
+2022-07-26 12:28:23.003 [http-nio-8899-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-07-26 12:28:23.234 [http-nio-8899-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2022-07-26 12:28:23.374 [http-nio-8899-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2022-07-26 12:28:23.557 [http-nio-8899-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2022-07-26 12:28:23.620 [http-nio-8899-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2022-07-26 12:40:24.125 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Starting RiceMonitoringApplication using Java 1.8.0_333 on LAPTOP-KCU9A8NP with PID 16132 (E:\JavaSoftware\苗情\水稻检测(后台)\target\classes started by zhang in E:\JavaSoftware\苗情\水稻检测(后台))
+2022-07-26 12:40:24.239 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - No active profile set, falling back to default profiles: default
+2022-07-26 12:40:25.261 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8899 (http)
+2022-07-26 12:40:25.361 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:40:25.421 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2022-07-26 12:40:25.539 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.46]
+2022-07-26 12:40:25.716 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2022-07-26 12:40:25.804 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1486 ms
+2022-07-26 12:40:27.604 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8899"]
+2022-07-26 12:40:27.873 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8899 (http) with context path ''
+2022-07-26 12:40:27.937 [main] INFO  com.ricemonitoring.RiceMonitoringApplication - Started RiceMonitoringApplication in 4.187 seconds (JVM running for 5.83)
+2022-07-26 12:40:27.989 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state LivenessState changed to CORRECT
+2022-07-26 12:40:28.040 [main] INFO  o.s.boot.availability.ApplicationAvailabilityBean - Application availability state ReadinessState changed to ACCEPTING_TRAFFIC

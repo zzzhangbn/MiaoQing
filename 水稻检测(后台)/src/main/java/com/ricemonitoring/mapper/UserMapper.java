@@ -25,6 +25,16 @@ public interface UserMapper {
     person_login isExist(person_login person);
     //2.查看账户密码是否正确
     person_login login(person_login person);
+
+    person_login login2(person_login person);
+
+    person_people findPhone(person_people person);
+
+    phone_login phoneLogin(phone_login phone);
+    // 记录验证码
+    void setPhoneCode(phone_login phoneCode);
+
+    void deletePhoneCode(String phone);
     // 查看账号登录失败次数
     person_login getFault(person_login person);
     // 账号失败次数清零

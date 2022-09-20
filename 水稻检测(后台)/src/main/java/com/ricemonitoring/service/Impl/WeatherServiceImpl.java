@@ -479,6 +479,26 @@ public class WeatherServiceImpl implements WeatherService {
 
     }
 
+    @Override
+    public Map<String, Object> weatherAdd(weatherinformation weatherAdd) {
+        Map<String,Object> map = new HashMap<>();
+        String str = weatherAdd.getDates();
+        String years = "";
+        String months = "";
+        years = str.substring(0,4);
+        months = str.substring(5,7);
+        if (months.charAt(0) == '0'){
+            months = months.substring(1,2);
+        }
+        years += "年";
+        months += "月";
+        weatherAdd.setYears(years);
+        weatherAdd.setMonths(months);
+        weatherMapper.weatherAdd(weatherAdd);
+        map.put("token", 200);
+        return map;
+    }
+
 }
 
 

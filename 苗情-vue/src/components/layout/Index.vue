@@ -8,8 +8,18 @@
       <div class="account">
         <div class="bg bg-blur"></div>
         <div class="myAccount">
-          <span style="width:70%;height:40px;line-height:40px">{{ms_username}}</span>
-          <span style="border-left:2px solid #ffffff;width:35%;height:40px;line-height:40px;text-align:center;cursor:pointer" @click="loginOut">退出</span>
+          <el-dropdown 
+            class="user-name" 
+            @command="handleCommand">
+            <span class="el-dropdown-link">
+              {{ms_username}}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item  command="userdata">个人中心</el-dropdown-item>
+              <el-dropdown-item  command="sonLogin">账号管理</el-dropdown-item>
+              <el-dropdown-item  command="loginout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
     </div>
@@ -28,7 +38,7 @@
           <el-menu-item index="/researchReport">研究报告</el-menu-item>
           <el-menu-item index="" @click="toBigScreen">苗情监控大屏</el-menu-item>
           <el-menu-item index="/weathershow">环境监控系统</el-menu-item>
-          <el-menu-item index="7">决策支持系统</el-menu-item>
+          <el-menu-item index="/userReport">管理日志</el-menu-item>
       </el-menu>
     </div>
     <router-view></router-view>
@@ -50,6 +60,17 @@ export default {
     };
   },
   methods: {
+    handleCommand(command) {
+            if(command == 'loginout'){
+                localStorage.removeItem('ms_username')
+                sessionStorage.removeItem("checkedCrop")
+                this.$router.push('/login');
+            } else if (command == 'userdata'){
+                this.$router.push('/userData');
+            } else if (command == 'sonLogin') {
+                this.$router.push('/accountChange');
+            }
+        },
     loginOut(){
       localStorage.removeItem("ms_username");
       sessionStorage.removeItem("ms_username");

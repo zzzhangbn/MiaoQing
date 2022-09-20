@@ -33,7 +33,7 @@
         <if test="area!=null and area!=''">
             and county = #{area}
         </if>
-        group by pin_zhong_name
+        order by pin_zhong_name
     </select>
 
 <!--    获取1-2表中的总面积-->

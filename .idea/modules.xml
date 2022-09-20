@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/水稻检测(后台)/RiceMonitoring.iml" filepath="$PROJECT_DIR$/水稻检测(后台)/RiceMonitoring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/水稻检测(后台)/RiceMonitoring (1) (com.RiceMonitoring).iml" filepath="$PROJECT_DIR$/水稻检测(后台)/RiceMonitoring (1) (com.RiceMonitoring).iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/苗情.iml" filepath="$PROJECT_DIR$/.idea/苗情.iml" />
+    </modules>
+  </component>
+</project>

@@ -10,11 +10,16 @@ import java.util.Map;
  * User: wangweiwen
  * Time: 10:29
  */
+
 public interface UserService {
     //用户注册功能
     Map<String,Object> register(person_register person);
     //用户的登录功能
     Map<String,Object> login(person_login person);
+    //用户短信验证码登录
+    Map<String,Object> phonelogin(String phone);
+
+    Map<String,Object> Loginp(phone_login pLogin);
     //查出所有的人员信息
     List<person_register> getAllPerson();
     //人员信息的审核

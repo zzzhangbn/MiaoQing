@@ -41,4 +41,5 @@ public interface WeatherMapper {
 
     //echar5沿淮地区
     List<weatherinformation> echart5_yanhuaijiwen(String daterange1, String daterange2);
+    void weatherAdd(weatherinformation weatherAdd);
 }

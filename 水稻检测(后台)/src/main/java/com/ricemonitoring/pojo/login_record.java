@@ -12,7 +12,9 @@ public class login_record {
     private String account;
     private String logintime;
     private String loginip;
+    private String loginname;
     private Integer status;
     private String password;
-    private Integer fault;
+    private Integer currentpage;
+    private Integer pagesize;
 }

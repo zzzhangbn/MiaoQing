@@ -8,6 +8,9 @@
         insert into person_register(name,password,phone,crop,access,apply_date,audit)
         values (#{name},#{password},#{phone},#{crop},#{access},#{apply_date},#{audit})
     </insert>
+    <delete id="deletePhoneCode">
+        delete from phone_login where phone=#{phone}
+    </delete>
 
     <!--判断账户是否存在-->
     <select id="isExist" parameterType="person_login" resultType="person_login">
@@ -20,6 +23,10 @@
     <!--用户登录功能-->
     <select id="login" parameterType="person_login" resultType="person_login">
         select account,access,area,crop,in_use from person_login where account=#{account} and password = #{password} and in_use = 1
+    </select>
+
+    <select id="login2" parameterType="person_login" resultType="person_login">
+        select account,access,area,crop,in_use from person_login where account=#{account} and in_use = 1
     </select>
     <!--查出所有的待审核人员信息-->
     <select id="getAllPerson" resultType="person_register">
@@ -83,8 +90,9 @@
         insert into ${tableId}(field_1,field_2,in_use) values (#{area},#{code},0)
     </insert>
     <insert id="addToLogin_record" parameterType="login_record">
-        insert into login_record(account,logintime,loginip,status,password,fault) values (#{account},#{logintime},#{loginip},#{status},#{password},#{fault})
+        insert into login_record(account,logintime,loginip,loginname,status,password) values (#{account},#{logintime},#{loginip},#{loginname},#{status},#{password})
     </insert>
+
     <!--通过作物类型获取监测点信息    -->
     <select id="getMonitoringPoint" parameterType="String" resultType="monitoring_point">
         select monitoring_point.`code`,province,city,area,sys_code.`code_name` as crop from monitoring_point,sys_code where monitoring_point.`crop` = sys_code.`code` and crop = #{crop}
@@ -102,6 +110,12 @@
     <select id="faultNumber" resultType="java.lang.Integer">
         select fault from person_login where account=#{account}
     </select>
+    <select id="findPhone" resultType="com.ricemonitoring.pojo.person_people">
+        select * from person_people where phone=#{phone}
+    </select>
+    <select id="phoneLogin" resultType="com.ricemonitoring.pojo.phone_login">
+        select * from phone_login where phone=#{phone} and code=#{code}
+    </select>
     <!-- 用户密码修改-->
     <update id="updatePwd" parameterType="person_login">
         update person_login set password = #{newPassword} where account = #{account}
@@ -114,6 +128,10 @@
     <update id="faultAdd" parameterType="person_login">
         update person_login set fault = fault + 1 where account = #{account}
     </update>
+    <insert id="setPhoneCode" parameterType="phone_login">
+        replace into phone_login(phone, code)
+        values (#{phone}, #{code})
+    </insert>
 
 
 </mapper>

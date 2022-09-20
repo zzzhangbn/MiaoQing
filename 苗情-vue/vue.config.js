@@ -18,6 +18,23 @@ module.exports = {
         'window.jQuery': 'jquery'
       }])
     },
+    // devServer: {
+    //   proxy: {
+    //     '/apil': {
+    //       target: 'http://pv.sohu.com/apil',
+    //       pathRewrite:{'^/apil': ''},      
+    //       changeOrigin: true
+    //     }, 
+    //     //'/foo': {
+    //     //  target: '<other_url>'
+    //     //}
+    //   }
+    // }
+}
+// module.exports = {
+  
+// }
+
   //   plugins: [
   //     new CompressionPlugin({
   //         algorithm: 'gzip', // 使用gzip压缩
@@ -28,4 +45,4 @@ module.exports = {
   //         deleteOriginalAssets: false, // 是否删除未压缩的源文件，谨慎设置，如果希望提供非gzip的资源，可不设置或者设置为false（比如删除打包后的gz后还可以加载到原始资源文件）
   //     }),
   // ],
-}
+

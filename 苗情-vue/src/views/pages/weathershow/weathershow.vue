@@ -48,8 +48,9 @@
               d="M273.4592 929.3312s1.9456-106.0352 124.3648-197.888c56.32-42.3936 141.0048-62.3104 228.864-139.7248C836.9152 406.5792 755.3024 153.6 755.3024 153.6s121.2928 294.1952-160.2048 487.424c-59.0336 40.4992-176.5376 86.4768-230.4 137.0624-77.1584 72.6528-81.8688 145.9712-91.2384 151.2448z"
               fill="#E89724"
               p-id="1844"
-            ></path></svg
-        ></span>
+            ></path>
+            </svg>
+          </span>
       </div>
       <el-select v-model="cityType" clearable placeholder="城市">
         <el-option
@@ -60,7 +61,6 @@
         >
         </el-option>
       </el-select>
-
       <el-select
         v-model="yearType"
         clearable
@@ -93,7 +93,87 @@
       </el-select>
       <span class="chaxun">
         <el-button type="primary" @click="searchInfo">查询</el-button>
-      </span>
+        <el-button type="success" @click="weatherAddVisible=true">更新天气数据</el-button>
+      </span>  
+      <el-dialog
+        title="更新天气数据"
+        :visible.sync="weatherAddVisible"
+        :before-close="handleClose"
+        >
+      <el-form :model="weatherAddForm"  ref="weatherAddForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="地区:">
+          <el-select v-model="weatherAddForm.citys" clearable placeholder="地区" style="width: 100%;" @blur="searchcity">
+            <el-option
+              v-for="item in cities"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>   
+        <el-form-item label="日期:">
+          <el-date-picker
+            style="width: 100%;"
+            v-model="weatherAddForm.dates"
+            type="date"
+            placeholder="日期"
+            format="yyyy 年 MM 月 dd 日"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="天气状况:">
+          <el-input placeholder="天气状况" v-model="weatherAddForm.weathers"></el-input>
+        </el-form-item>
+        <el-form-item label="风向:">
+          <el-input placeholder="风向" v-model="weatherAddForm.wind_direction"></el-input>
+        </el-form-item>
+        <el-form-item label="实际温度(℃):">
+          <el-input placeholder="实际温度(℃)" v-model="weatherAddForm.realtime_temperature" ></el-input>
+        </el-form-item>
+        <el-form-item label="最高温度(℃):">
+          <el-input placeholder="最高温度(℃)" v-model="weatherAddForm.highest_temperature" ></el-input>
+        </el-form-item>
+        <el-form-item label="最低温度(℃):">
+          <el-input placeholder="最低温度(℃)" v-model="weatherAddForm.minimum_temperature" ></el-input>
+        </el-form-item>
+        <el-form-item label="湿度(%):">
+          <el-input placeholder="湿度(%)" v-model="weatherAddForm.humidity" ></el-input>
+        </el-form-item>
+        <el-form-item label="空气质量:">
+          <el-select v-model="weatherAddForm.air_quality" clearable placeholder="空气质量" style="width: 100%;">
+            <el-option
+              v-for="item in air"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="紫外线:">
+          <el-select v-model="weatherAddForm.ultraviolet_rays" clearable placeholder="紫外线" style="width: 100%;">
+            <el-option
+              v-for="item in rays"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="PM2.5:">
+          <el-input placeholder="PM2.5" v-model="weatherAddForm.pm"></el-input>
+        </el-form-item>
+        <el-form-item label="日照时长(h)">
+          <el-input placeholder="日照时长(h)" v-model="weatherAddForm.sunlight_time"></el-input>
+        </el-form-item>
+        <el-form-item label="降水量(mm)">
+          <el-input placeholder="降水量(mm)" v-model="weatherAddForm.precipitations"></el-input>
+        </el-form-item>
+      </el-form> 
+          <span slot="footer" class="dialog-footer">
+          <el-button @click="weatherAddCancle">取 消</el-button>
+          <el-button type="primary" @click="weatherAdd">更 新</el-button>
+          </span>
+      </el-dialog>
       <div class="date_select">
         <span class="chengshixuanze">
           <el-select v-model="cityTypes" clearable placeholder="城市">
@@ -121,8 +201,9 @@
         <span class="datechaxun">
           <el-button type="primary" @click="datesearchInfo">查询</el-button>
         </span>
+          
       </div>
-
+ 
       <div class="pingjun_weather_show" align="center">
         <el-row :gutter="0" type="flex">
           <el-col :span="2.1">
@@ -791,8 +872,7 @@
                 d="M273.4592 929.3312s1.9456-106.0352 124.3648-197.888c56.32-42.3936 141.0048-62.3104 228.864-139.7248C836.9152 406.5792 755.3024 153.6 755.3024 153.6s121.2928 294.1952-160.2048 487.424c-59.0336 40.4992-176.5376 86.4768-230.4 137.0624-77.1584 72.6528-81.8688 145.9712-91.2384 151.2448z"
                 fill="#E89724"
                 p-id="1844"
-              ></path></svg
-          ></span>
+              ></path></svg></span>
         </div>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -1020,16 +1100,19 @@
         </el-collapse>
       </div>
     </div>
-  </div>
+</div>
+
 </template>
 
 <script>
-import axios from "axios";
-import * as echarts from "echarts";
-import { log } from "mathjs";
+import  axios  from 'axios'
+import * as echarts from "echarts"
+import { log } from "mathjs"
 export default {
   data() {
     return {
+      // 增加窗口是否可见
+      weatherAddVisible: false,
       //手风琴折叠
       activeNames: [],
       //分页
@@ -1042,18 +1125,24 @@ export default {
       tableName: "weatherinformation",
       //城市的option
       cities: [],
-      cityType: "肥东县",
+      cityType: "",
       //年份的option
       years: [],
-      yearType: "2021年",
+      yearType: "",
       //月份的option
       months: [],
-      monthType: "11月",
+      monthType: "",
+      //紫外线的option
+      rays:[],
+      
+      //空气质量option
+      air:[],
+      
       //日期选择
       daterange: "",
       //日期的城市选择
       citiess: [],
-      cityTypes: "肥东县",
+      cityTypes: "",
 
       /* 平均数据变量 */
       //平均高温
@@ -1079,12 +1168,146 @@ export default {
 
       //echart3所选日期的年份的所有数据
       echart3_qiwen_mean: "",
+      //天气增加表格
+      weatherAddForm: {
+        citys: "",
+        dates: "",
+        weathers: "",
+        realtime_temperature: "",
+        highest_temperature: "",
+        minimum_temperature: "",
+        humidity: "",
+        wind_direction: "",
+        ultraviolet_rays:"",
+        air_quality:"",
+        pm: "",
+        sunlight_time: "",
+        precipitations: "",
+      },
     };
   },
   created() {
+    this.getDay();
     this.initData();
+    //this.test();
   },
   methods: {
+    isNumber(value) {//验证是否为数字
+        var patrn = /^(-)?\d+(\.\d+)?$/;
+        if (patrn.exec(value) == null || value == "") {
+            return false
+        } else {
+            return true
+        }
+    },
+    weatherAdd(){
+      var that = this;
+      if (!this.isNumber(this.weatherAddForm.realtime_temperature)){
+        this.$message('实际温度格式错误，请重新输入！');
+        return;
+      }
+      if (!this.isNumber(this.weatherAddForm.highest_temperature)){
+        this.$message('最高温度格式错误，请重新输入！');
+        return;
+      }
+      if (!this.isNumber(this.weatherAddForm.minimum_temperature)){
+        this.$message('最低温度格式错误，请重新输入！');
+        return;
+      }
+      if (!this.isNumber(this.weatherAddForm.humidity)){
+        this.$message('湿度格式错误，请重新输入！');
+        return;
+      }
+      if (!this.isNumber(this.weatherAddForm.pm)){
+        this.$message('PM2.5格式错误，请重新输入！');
+        return;
+      }
+      if (!this.isNumber(this.weatherAddForm.sunlight_time)){
+        this.$message('日照时间格式错误，请重新输入！');
+        return;
+      }
+      if (!this.isNumber(this.weatherAddForm.precipitations)){
+        this.$message('降雨量格式错误，请重新输入！');
+        return;
+      }
+      if (this.weatherAddForm.humidity >= 100){
+        this.$message('湿度数据有误，请检查！');
+        return;
+      }
+      if (this.weatherAddForm.sunlight_time >= 24) {
+        this.$message('日照时间数据有误，请检查!');
+        return;
+      }
+      axios({
+        url: "/weatherAdd",
+        method: "post",
+        data: this.weatherAddForm,
+      }).then((res)=>{
+        switch (res.data.token) {
+          case 200 :
+            that.$message.success("添加成功");
+          case 400 :
+            that.$messge.error("添加失败");
+        }
+        
+      }).finally(()=>{
+        that.initData();
+      })
+      this.weatherAddVisible=false;
+      this.weatherAddForm={};
+    },
+    weatherAddCancle(){
+      this.weatherAddVisible=false;
+      this.weatherAddForm={};
+    },
+    searchcity(){
+      var that = this;
+      // 去除市，县，区这样的后缀
+      var long = Object.keys(this.weatherAddForm.citys).length;
+      var cityss = this.weatherAddForm.citys.substring(0,long - 1);
+      axios({
+        url: "https://www.yiketianqi.com/free/day?appid=93373952&appsecret=7d4OjYCp&unescape=1&vue=1",
+        method: "get",
+        params: {
+          city: cityss,
+        }
+      }).then((res)=>{
+        //console.log(res.data);
+        if (res.data.errmsg){
+          that.$message(res.data.errmsg);
+        } else {
+          that.$message('查询成功,自动填入');
+        }
+        that.weatherAddForm.dates=res.data.date;
+        that.weatherAddForm.weathers=res.data.wea;
+        that.weatherAddForm.realtime_temperature=res.data.tem;
+        that.weatherAddForm.highest_temperature=res.data.tem_day;
+        that.weatherAddForm.minimum_temperature=res.data.tem_night;
+        // 去除%符号
+        var long2=Object.keys(res.data.humidity).length;
+        var humi=res.data.humidity.substring(0,long2-1)
+        that.weatherAddForm.humidity=humi;
+        that.weatherAddForm.wind_direction=res.data.win+' '+res.data.win_speed;
+        if (res.data.air <= 50) {
+          that.weatherAddForm.air_quality="优";
+        }else if (res.data.air <= 100) {
+          that.weatherAddForm.air_quality="良";
+        }else if (res.data.air <= 150) {
+          that.weatherAddForm.air_quality="轻度污染";
+        }else if (res.data.air <= 200) {
+          that.weatherAddForm.air_quality="中度污染";
+        }else if (res.data.air <= 300) {
+          that.weatherAddForm.air_quality="重度污染";
+        }else {
+           that.weatherAddForm.air_quality="严重污染";
+        }
+      });
+    },
+    getDay(){
+      var nowDate=new Date();
+      this.yearType=nowDate.getFullYear() + '年';
+      this.monthType=nowDate.getMonth() + 1 + '月';
+    },
     handleChange(val) {
       console.log(val);
     },
@@ -1228,6 +1451,10 @@ export default {
           var yearData = [];
           //月份
           var monthData = [];
+          //紫外线
+          var raysData = [];
+          //空气质量
+          var airData = [];
           //console.log(optionData);
           for (var i = 0; i < optionData.length; ++i) {
             if (optionData[i].option === "城市") {
@@ -1248,10 +1475,24 @@ export default {
                 value: optionData[i].list,
               });
             }
+            if (optionData[i].option === "紫外线") {
+              raysData.push({
+                label: optionData[i].list,
+                value: optionData[i].list,
+              });
+            }
+            if (optionData[i].option === "空气质量") {
+              airData.push({
+                label: optionData[i].list,
+                value: optionData[i].list,
+              });
+            }
           }
           _this.cities = cityData;
           _this.years = yearData;
           _this.months = monthData;
+          _this.rays = raysData;
+          _this.air = airData;
         })
         .catch((err) => {
           return this.$message.error("查询数据失败！");

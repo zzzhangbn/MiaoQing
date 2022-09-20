@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ricemonitoring.mapper.UserReportMapper">
+    <!--查询页面-->
+    <select id="getAllRecord" resultType="com.ricemonitoring.pojo.login_record">
+        select account,logintime,loginip,loginname,status from login_record
+        <where>
+            <if test="account != null and account != ''" >
+                and account like concat('%',#{account},'%')
+            </if>
+            <if test="time2 != null and time2 != '' and time1 != null and time1 != ''">
+                and logintime between #{time1} and #{time2}
+            </if>
+            <if test="status != null and status != ''">
+                and status like concat('%',#{status},'%')
+            </if>
+            <if test="loginip != null and loginip != ''" >
+                and loginip like concat('%',#{loginip},'%')
+            </if>
+            <if test="loginname != null and logintime != ''">
+                and loginname like concat('%',#{loginname},'%')
+            </if>
+        </where>
+        limit #{currentpage},#{pagesize}
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(id) from login_record
+        <where>
+            <if test="account != null and account != ''" >
+                and account like concat('%',#{account},'%')
+            </if>
+            <if test="time1 != null and time1 != ''">
+                and logintime &gt; #{time1}
+            </if>
+            <if test="time2 != null and time2 != ''">
+                and logintime &lt; #{time2}
+            </if>
+            <if test="time2 != null and time2 != '' and time1 != null and time1 != ''">
+                and logintime between #{time1} and #{time2}
+            </if>
+            <if test="status != null and status != ''">
+                and status like concat('%',#{status},'%')
+            </if>
+            <if test="loginip != null and loginip != ''" >
+                and loginip like concat('%',#{loginip},'%')
+            </if>
+            <if test="loginname != null and logintime != ''">
+                and loginname like concat('%',#{loginname},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -30,9 +30,11 @@
       </span>
       <h2>环境监控系统</h2>
     </div>
-    <div class="item">
-      <span> <font-awesome-icon icon="cloud-meatball" /> </span>
-      <h2>专家智能系统</h2>
+    <div class="item" @click="toModel('用户中心')">
+      <span> 
+        <font-awesome-icon icon="cloud-meatball" /> 
+      </span>
+      <h2>用户中心</h2>
     </div>
   </div>
 </template>
@@ -63,6 +65,9 @@ export default {
           break;
         case "苗情监控大屏":
           window.open("http://139.196.208.205:8207/");
+          break;
+        case "用户中心":
+          this.$router.replace("/userData");
           break;
       }
     },

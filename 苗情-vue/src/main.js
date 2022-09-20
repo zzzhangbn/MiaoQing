@@ -13,6 +13,7 @@ Vue.config.productionTip = false;
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 axios.defaults.baseURL = 'http://localhost:8899/'
+//axios.defaults.baseURL='http://pv.sohu.com'
 // axios.defaults.baseURL = 'http://139.196.208.205:8889/' 
 Vue.use(VueAxios, axios)
 

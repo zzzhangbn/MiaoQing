@@ -38,3 +38,6 @@ ftp-centos:
 server:
   port: 8899
 
+file:
+  upload-path: E:/JavaSoftware/Picture
+

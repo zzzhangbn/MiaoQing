@@ -22,4 +22,5 @@ public class person_login {
     private String sub_crop;
     private int in_use;
     private int fault;
+    private String cip;
 }

@@ -160,7 +160,7 @@ export default {
         params:{crop:crop}
       }).then(res=>{
         var tempData = res.data;
-        // //console.log(tempData);
+        console.log(tempData);
         //作物类型的转化
         tempData.forEach(item => {
           //将字符串转化为数组

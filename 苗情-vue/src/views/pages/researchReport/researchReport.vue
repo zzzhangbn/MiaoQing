@@ -193,7 +193,7 @@ export default {
         fileName:'',
         //后台传来的文件list
         fileList:[],
-         search: '',
+        search: '',
         //文件在线预览的url
         url:'',
         //条件检索
@@ -266,7 +266,7 @@ export default {
         //获取到所有的研究报告列表
         getFiles(){
           var account  = sessionStorage.getItem("ms_username");
-          console.log(this.code_name);
+          //console.log(this.code_name);
           axios({
             url:'/getFiles',
             method:'get',
@@ -287,9 +287,9 @@ export default {
           })
         },
         //按年分检索
-        changeYear(){
-          this.getFiles();
-        },
+        // changeYear(){
+        //   this.getFiles();
+        // },
         addReport(){
           // //console.log(this.checkedTemplate);
           this.$router.replace(this.checkedTemplate);

@@ -13,4 +13,13 @@ export default new Vuex.Store({
     getters,
     mutations,
     actions,
+    proxyTable: {
+        '/apli': {
+          target: 'http://pv.sohu.com',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/apli': '/apli' // 重写路径
+          }
+        }
+      },
 })

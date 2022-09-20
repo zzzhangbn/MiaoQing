@@ -53,6 +53,17 @@ public class userController {
     }
 
     /*
+    短信验证码登录
+    */
+    @PostMapping("/phonelogin")
+    public Map<String, Object> phonelogin(@RequestParam("phone") String phone){
+        return userService.phonelogin(phone);
+    }
+    @PostMapping("/pLogin")
+    public Map<String, Object> pLogin(@RequestBody phone_login pLogin){
+        return userService.Loginp(pLogin);
+    }
+    /*
     查出所有的人员信息供超级管理员审核
      */
     @PostMapping("/getAllPerson")

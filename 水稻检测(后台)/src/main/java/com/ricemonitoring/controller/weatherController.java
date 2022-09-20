@@ -195,6 +195,11 @@ public class weatherController {
         return echart5_jiwensearchList;
 
     }
+    //增加天气信息
+    @PostMapping("/weatherAdd")
+    public  Map<String,Object> weatherAdd(@RequestBody weatherinformation weatherAdd) {
+        return weatherService.weatherAdd(weatherAdd);
+    }
 
 
 }

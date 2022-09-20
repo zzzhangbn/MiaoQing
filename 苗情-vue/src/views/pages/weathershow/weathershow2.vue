@@ -348,9 +348,20 @@ export default {
     };
   },
   created() {
-    this.initData();
+    //this.initData();
+    this.test();
+
   },
   methods: {
+    test() {
+      var that = this;
+      axios({
+        url: "https://i.tianqi.com/?c=code&a=getcode&id=39&num=5&icon=1&num=5&site=14",
+        method:"get"
+      }).then((res)=>{
+        console(res);
+      })
+    }
     //初始化数据
     initData() {
       this.getTableData();
